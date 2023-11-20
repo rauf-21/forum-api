@@ -1,0 +1,3 @@
+export const AUTHENTICATION_STRATEGY = {
+  JWT: "FORUM_API_JWT",
+};

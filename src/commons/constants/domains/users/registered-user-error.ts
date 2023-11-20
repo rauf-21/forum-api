@@ -1,0 +1,6 @@
+const prefix = "REGISTERED_USER_ERROR";
+
+export const REGISTERED_USER_ERROR = {
+  MISSING_PROPERTY: `${prefix}.MISSING_PROPERTY`,
+  INVALID_DATA_TYPE: `${prefix}.INVALID_DATA_TYPE`,
+};

@@ -1,0 +1,21 @@
+{
+  "parser": "@typescript-eslint/parser",
+  "plugins": ["simple-import-sort", "@typescript-eslint", "jest"],
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:jest/recommended",
+    "airbnb-base",
+    "airbnb-typescript/base",
+    "prettier"
+  ],
+  "parserOptions": {
+    "project": ["./tsconfig.json"]
+  },
+  "rules": {
+    "import/prefer-default-export": "off",
+    "simple-import-sort/imports": "error",
+    "simple-import-sort/exports": "error",
+    "@typescript-eslint/no-floating-promises": "error"
+  }
+}

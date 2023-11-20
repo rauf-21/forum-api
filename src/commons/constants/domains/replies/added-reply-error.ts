@@ -1,0 +1,6 @@
+const prefix = "ADDED_REPLY_ERROR";
+
+export const ADDED_REPLY_ERROR = {
+  MISSING_PROPERTY: `${prefix}.MISSING_PROPERTY`,
+  INVALID_DATA_TYPE: `${prefix}.INVALID_DATA_TYPE`,
+};
