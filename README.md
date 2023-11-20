@@ -12,8 +12,8 @@ Anda bisa mengubah nama database di file `.env.development` dan `.env.test`.
 
 ### Migration up
 
-Jalankan command `migration-up` dan `migration-up:test`.
+Jalankan command `migrate-up` dan `migrate-up:test`.
 
 ### Migration down
 
-Jalankan command `migration-down` dan `migration-down:test`.
+Jalankan command `migrate-down` dan `migrate-down:test`.
