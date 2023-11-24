@@ -1,4 +1,7 @@
+import * as jme from "jest-mock-extended";
+
 import { AddedThread } from "../../domains/threads/entities/added-thread";
+import { NewThread } from "../../domains/threads/entities/new-thread";
 import { ThreadRepository } from "../../domains/threads/thread-repository";
 import { AddThreadUseCase } from "./add-thread-use-case";
 
@@ -10,15 +13,15 @@ describe("AddThreadUseCase", () => {
       owner: "user-123",
     };
 
-    const mockAddedThread = new AddedThread({
-      id: "thread-123",
-      title: useCasePayload.title,
-      owner: useCasePayload.owner,
-    });
+    const mockThreadRepository = jme.mock<ThreadRepository>();
 
-    const mockThreadRepository = {
-      addThread: jest.fn().mockResolvedValue(mockAddedThread),
-    } satisfies Partial<ThreadRepository> as unknown as ThreadRepository;
+    mockThreadRepository.addThread.mockResolvedValue(
+      new AddedThread({
+        id: "thread-123",
+        title: useCasePayload.title,
+        owner: useCasePayload.owner,
+      })
+    );
 
     const addThreadUseCase = new AddThreadUseCase({
       threadRepository: mockThreadRepository,
@@ -26,7 +29,15 @@ describe("AddThreadUseCase", () => {
 
     const addedThread = await addThreadUseCase.execute(useCasePayload);
 
-    expect(addedThread).toStrictEqual(mockAddedThread);
-    expect(mockThreadRepository.addThread).toHaveBeenCalledWith(useCasePayload);
+    expect(addedThread).toStrictEqual(
+      new AddedThread({
+        id: "thread-123",
+        title: useCasePayload.title,
+        owner: useCasePayload.owner,
+      })
+    );
+    expect(mockThreadRepository.addThread).toHaveBeenCalledWith(
+      new NewThread(useCasePayload)
+    );
   });
 });

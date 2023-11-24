@@ -16,7 +16,7 @@ describe("AuthenticationRepository postgres", () => {
     await db.destroy();
   });
 
-  describe("addToken function", () => {
+  describe("addToken method", () => {
     it("should be able to add a token to the database", async () => {
       const authenticationRepository = new AuthenticationRepositoryPostgres(db);
 
@@ -26,25 +26,25 @@ describe("AuthenticationRepository postgres", () => {
 
       const foundToken = await AuthenticationsTableTestHelper.findToken(token);
 
-      expect(foundToken).not.toBe(undefined);
-      expect(foundToken).toBe(token);
+      expect(typeof foundToken).toEqual("string");
+      expect(foundToken).toEqual(token);
     });
   });
 
-  describe("checkAvailabilityToken function", () => {
-    it("should not throw an error if a token is available", async () => {
+  describe("verifyTokenIsExists method", () => {
+    it("should be able to verify if a token exists", async () => {
       const authenticationRepository = new AuthenticationRepositoryPostgres(db);
 
       const token = "token";
 
       await AuthenticationsTableTestHelper.addToken(token);
 
-      const result = await authenticationRepository.verifyTokenIsExists(token);
-
-      expect(result).toEqual(undefined);
+      await expect(
+        authenticationRepository.verifyTokenIsExists(token)
+      ).resolves.not.toThrow(Error);
     });
 
-    it("should throw an error if a token is not available", async () => {
+    it("should be able to verify if a token does not exist", async () => {
       const authenticationRepository = new AuthenticationRepositoryPostgres(db);
 
       await expect(
@@ -55,7 +55,7 @@ describe("AuthenticationRepository postgres", () => {
     });
   });
 
-  describe("deleteToken", () => {
+  describe("deleteToken method", () => {
     it("should be able to delete a token from the database", async () => {
       const authenticationRepository = new AuthenticationRepositoryPostgres(db);
 
@@ -66,7 +66,7 @@ describe("AuthenticationRepository postgres", () => {
 
       const foundToken = await AuthenticationsTableTestHelper.findToken(token);
 
-      expect(foundToken).toBe(undefined);
+      expect(foundToken).toEqual(undefined);
     });
   });
 });

@@ -32,7 +32,9 @@ describe("ReplyRepository postgres", () => {
 
   describe("addReply method", () => {
     it("should be able to add a reply to the database", async () => {
-      const replyRepository = new ReplyRepositoryPostgres(db, nanoid);
+      const fakeIdGenerator = () => "123";
+
+      const replyRepository = new ReplyRepositoryPostgres(db, fakeIdGenerator);
 
       const owner = "user-123";
 
@@ -59,7 +61,7 @@ describe("ReplyRepository postgres", () => {
 
       const addedReply = await replyRepository.addReply(newReply);
 
-      expect(addedReply.id).toBeDefined();
+      expect(addedReply.id).toEqual("reply-123");
       expect(addedReply.content).toEqual(newReply.content);
       expect(addedReply.owner).toEqual(newReply.owner);
     });
@@ -99,10 +101,9 @@ describe("ReplyRepository postgres", () => {
         owner,
       });
 
-      const result =
-        await replyRepository.verifyUserIsReplyOwner(replyOwnerContext);
-
-      expect(result).toEqual(undefined);
+      await expect(
+        replyRepository.verifyUserIsReplyOwner(replyOwnerContext)
+      ).resolves.not.toThrow(Error);
     });
 
     it("should be able to verify if a user is not the reply owner", async () => {
@@ -145,7 +146,7 @@ describe("ReplyRepository postgres", () => {
   });
 
   describe("verifyReplyIsExists method", () => {
-    it("should be able to verify if reply exists in the database", async () => {
+    it("should be able to verify if reply exists", async () => {
       const replyRepository = new ReplyRepositoryPostgres(db, nanoid);
 
       const owner = "user-123";
@@ -179,13 +180,12 @@ describe("ReplyRepository postgres", () => {
         commentId,
       });
 
-      const result =
-        await replyRepository.verifyReplyIsExists(replyLocatorContext);
-
-      expect(result).toEqual(undefined);
+      await expect(
+        replyRepository.verifyReplyIsExists(replyLocatorContext)
+      ).resolves.not.toThrow(Error);
     });
 
-    it("should be able verify if reply does not exist in the database", async () => {
+    it("should be able verify if reply does not exist", async () => {
       const replyRepository = new ReplyRepositoryPostgres(db, nanoid);
 
       const owner = "user-123";

@@ -62,7 +62,7 @@ describe("AuthenticationStrategyJwt", () => {
     });
 
     const server = await createServer(
-      {} satisfies Partial<CreateServerDependencies> as unknown as CreateServerDependencies
+      {} as unknown as CreateServerDependencies
     );
 
     server.route([

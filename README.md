@@ -1,19 +1,9 @@
 # Forum API
 
-## Cara setup environment variable
+## Cara Setup
 
-- Copy file `.env.development.local.example` dan `.env.test.local.example`
-- Rename file-file yang telah di-copy tadi menjadi `.env.development.local` dan `.env.test.local`.
-- Isi semua variabel yang ada di dalam 2 file tersebut
-
-Anda bisa mengubah nama database di file `.env.development` dan `.env.test`.
-
-## Cara setup database
-
-### Migration up
-
-Jalankan command `migrate-up` dan `migrate-up:test`.
-
-### Migration down
-
-Jalankan command `migrate-down` dan `migrate-down:test`.
+- Copy file `.env.development.local.example` dan `.env.test.local.example`.
+- Ubah name file yang telah di-copy menjadi `.env.development.local` dan `.env.test.local`.
+- Isi semua variabel pada kedua file tersebut.
+- Jalankan command `generate-db-types` untuk men-**generate database types**.
+- Jalankan command `migrate-up` dan `migrate-up:test` untuk **migration up**. Gunakan command `migrate-down` dan `migrate-down:test` untuk **migration down**.

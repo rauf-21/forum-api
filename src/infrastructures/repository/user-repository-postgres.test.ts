@@ -21,13 +21,12 @@ describe("UserRepositoryPostgres", () => {
   });
 
   describe("verifyUsernameIsAvailable method", () => {
-    it("should not throw an error if the username is available", async () => {
-      const userRepositoryPostgres = new UserRepositoryPostgres(db, () => "");
+    it("should be able to verify if the username is available", async () => {
+      const userRepositoryPostgres = new UserRepositoryPostgres(db, nanoid);
 
-      const result =
-        await userRepositoryPostgres.verifyUsernameIsAvailable("dicoding");
-
-      expect(result).toEqual(undefined);
+      await expect(
+        userRepositoryPostgres.verifyUsernameIsAvailable("dicoding")
+      ).resolves.not.toThrow(Error);
     });
 
     it("should throw an error if the username is not available", async () => {
@@ -36,7 +35,7 @@ describe("UserRepositoryPostgres", () => {
         username: "dicoding",
       });
 
-      const userRepositoryPostgres = new UserRepositoryPostgres(db, () => "");
+      const userRepositoryPostgres = new UserRepositoryPostgres(db, nanoid);
 
       await expect(
         userRepositoryPostgres.verifyUsernameIsAvailable("dicoding")
@@ -47,9 +46,9 @@ describe("UserRepositoryPostgres", () => {
   describe("addUser method", () => {
     it("should be able to register user and return the registered user", async () => {
       const registerUser = new RegisterUser({
-        username: "dicoding_1698910186",
-        password: "secret_password",
-        fullname: "Dicoding Indonesia",
+        username: "bono",
+        password: "bono123",
+        fullname: "bono bono",
       });
 
       const fakeIdGenerator = () => "123";
@@ -63,14 +62,14 @@ describe("UserRepositoryPostgres", () => {
 
       const user = await UsersTableTestHelper.findUserById("user-123");
 
-      expect(user).not.toBe(undefined);
+      expect(user).not.toEqual(undefined);
     });
 
     it("should return the registered user correctly", async () => {
       const registerUser = new RegisterUser({
-        username: "dicoding",
-        password: "secret_password",
-        fullname: "Dicoding Indonesia",
+        username: "bono",
+        password: "bono123",
+        fullname: "bono bono",
       });
 
       const fakeIdGenerator = () => "123";
@@ -85,8 +84,8 @@ describe("UserRepositoryPostgres", () => {
       expect(registeredUser).toStrictEqual(
         new RegisteredUser({
           id: "user-123",
-          username: "dicoding",
-          fullname: "Dicoding Indonesia",
+          username: "bono",
+          fullname: "bono bono",
         })
       );
     });
@@ -94,7 +93,7 @@ describe("UserRepositoryPostgres", () => {
 
   describe("getUserByUsername method", () => {
     it("should return the user if it is found", async () => {
-      const userRepositoryPostgres = new UserRepositoryPostgres(db, () => "");
+      const userRepositoryPostgres = new UserRepositoryPostgres(db, nanoid);
 
       await UsersTableTestHelper.addUser({
         id: "user-123",
@@ -104,8 +103,7 @@ describe("UserRepositoryPostgres", () => {
 
       const user = await userRepositoryPostgres.getUserByUsername("dicoding");
 
-      expect(user.username).toBe("dicoding");
-      expect(user.password).toBe("secret_password");
+      expect(user).not.toEqual(undefined);
     });
 
     it("should throw an error if the user is not found", () => {

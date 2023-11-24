@@ -47,7 +47,7 @@ describe("CommentRepository postgres", () => {
 
       const addedComment = await commentRepository.addComment(newComment);
 
-      expect(addedComment.id).toBeDefined();
+      expect(typeof addedComment.id).toEqual("string");
       expect(addedComment.content).toEqual(newComment.content);
       expect(addedComment.owner).toEqual(owner);
     });
@@ -78,10 +78,9 @@ describe("CommentRepository postgres", () => {
         owner,
       });
 
-      const result =
-        await commentRepository.verifyUserIsCommentOwner(commentOwnerContext);
-
-      expect(result).toEqual(undefined);
+      await expect(
+        commentRepository.verifyUserIsCommentOwner(commentOwnerContext)
+      ).resolves.not.toThrow(Error);
     });
 
     it("should be able to verify if a user is not the comment owner", async () => {
@@ -115,7 +114,7 @@ describe("CommentRepository postgres", () => {
   });
 
   describe("verifyCommentIsExists method", () => {
-    it("should be able to verify if a comment exists in the database", async () => {
+    it("should be able to verify if a comment exists", async () => {
       const commentRepository = new CommentRepositoryPostgres(db, nanoid);
 
       const owner = "user-123";
@@ -139,14 +138,12 @@ describe("CommentRepository postgres", () => {
         threadId,
       });
 
-      const result = await commentRepository.verifyCommentIsExists(
-        commentLocatorContext
-      );
-
-      expect(result).toEqual(undefined);
+      await expect(
+        commentRepository.verifyCommentIsExists(commentLocatorContext)
+      ).resolves.not.toThrow(Error);
     });
 
-    it("should be able to verify if a comment does not exist in the database", async () => {
+    it("should be able to verify if a comment does not exist", async () => {
       const commentRepository = new CommentRepositoryPostgres(db, nanoid);
 
       const owner = "user-123";
@@ -279,7 +276,7 @@ describe("CommentRepository postgres", () => {
 
       await ThreadsTableTestHelper.addThread(thread);
 
-      // Get comments from existent thread
+      // Get comments from existing thread
       const commentsA = await commentRepository.getCommentsByThreadId(
         thread.id
       );

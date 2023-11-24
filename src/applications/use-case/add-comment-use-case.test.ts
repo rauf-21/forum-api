@@ -1,5 +1,8 @@
+import * as jme from "jest-mock-extended";
+
 import { CommentRepository } from "../../domains/comments/comment-repository";
 import { AddedComment } from "../../domains/comments/entities/added-comment";
+import { NewComment } from "../../domains/comments/entities/new-comment";
 import { ThreadRepository } from "../../domains/threads/thread-repository";
 import { AddCommentUseCase } from "./add-comment-use-case";
 
@@ -11,19 +14,19 @@ describe("AddCommentUseCase", () => {
       threadId: "thread-123",
     };
 
-    const mockAddedComment = new AddedComment({
-      id: "comment-123",
-      content: useCasePayload.content,
-      owner: useCasePayload.owner,
-    });
+    const mockCommentRepository = jme.mock<CommentRepository>();
 
-    const mockCommentRepository = {
-      addComment: jest.fn().mockResolvedValue(mockAddedComment),
-    } satisfies Partial<CommentRepository> as unknown as CommentRepository;
+    mockCommentRepository.addComment.mockResolvedValue(
+      new AddedComment({
+        id: "comment-123",
+        content: useCasePayload.content,
+        owner: useCasePayload.owner,
+      })
+    );
 
-    const mockThreadRepository = {
-      verifyThreadIsExists: jest.fn().mockResolvedValue(undefined),
-    } satisfies Partial<ThreadRepository> as unknown as ThreadRepository;
+    const mockThreadRepository = jme.mock<ThreadRepository>();
+
+    mockThreadRepository.verifyThreadIsExists.mockResolvedValue(undefined);
 
     const addCommentUseCase = new AddCommentUseCase({
       commentRepository: mockCommentRepository,
@@ -32,9 +35,15 @@ describe("AddCommentUseCase", () => {
 
     const addedComment = await addCommentUseCase.execute(useCasePayload);
 
-    expect(addedComment).toEqual(mockAddedComment);
+    expect(addedComment).toEqual(
+      new AddedComment({
+        id: "comment-123",
+        content: useCasePayload.content,
+        owner: useCasePayload.owner,
+      })
+    );
     expect(mockCommentRepository.addComment).toHaveBeenCalledWith(
-      useCasePayload
+      new NewComment(useCasePayload)
     );
     expect(mockThreadRepository.verifyThreadIsExists).toHaveBeenCalledWith(
       useCasePayload.threadId

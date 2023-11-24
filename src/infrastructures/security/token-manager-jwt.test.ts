@@ -1,4 +1,5 @@
 import Jwt, { HapiJwt } from "@hapi/jwt";
+import * as jme from "jest-mock-extended";
 
 import { AUTHENTICATION_TOKEN_MANAGER_ERROR } from "../../commons/constants/applications/security/authentication-token-manager-error";
 import {
@@ -11,53 +12,65 @@ describe("TokenManagerJwt", () => {
   describe("createAccessToken method", () => {
     it("should be able to create the accessToken correctly", async () => {
       const payload = {
-        username: "dicoding",
+        username: "bono",
       };
 
-      const mockJwtToken = {
-        generate: jest.fn().mockImplementation(() => "mock_token"),
-      } satisfies Partial<HapiJwt.Token> as unknown as HapiJwt.Token;
+      const mockJwtToken = jme.mock<HapiJwt.Token>();
+
+      mockJwtToken.generate.mockReturnValue("token");
 
       const tokenManagerJwt = new TokenManagerJwt(mockJwtToken);
 
       const accessToken = await tokenManagerJwt.createAccessToken(payload);
 
+      expect(accessToken).toEqual("token");
       expect(mockJwtToken.generate).toHaveBeenCalledWith(
         payload,
         ACCESS_TOKEN_SECRET
       );
-      expect(accessToken).toEqual("mock_token");
     });
   });
 
   describe("createRefreshToken method", () => {
     it("should be able to create the refreshToken correctly", async () => {
       const payload = {
-        username: "dicoding",
+        username: "bono",
       };
 
-      const mockJwtToken = {
-        generate: jest.fn().mockImplementation(() => "mock_token"),
-      } satisfies Partial<HapiJwt.Token> as unknown as HapiJwt.Token;
+      const mockJwtToken = jme.mock<HapiJwt.Token>();
+
+      mockJwtToken.generate.mockReturnValue("token");
 
       const tokenManagerJwt = new TokenManagerJwt(mockJwtToken);
 
       const refreshToken = await tokenManagerJwt.createRefreshToken(payload);
 
+      expect(refreshToken).toEqual("token");
       expect(mockJwtToken.generate).toHaveBeenCalledWith(
         payload,
         REFRESH_TOKEN_SECRET
       );
-      expect(refreshToken).toEqual("mock_token");
     });
   });
 
   describe("verifyRefreshToken function", () => {
-    it("should throw an error if verification failed", async () => {
+    it("should be able to verify the refresh token", async () => {
+      const tokenManagerJwt = new TokenManagerJwt(Jwt.token);
+
+      const refreshToken = await tokenManagerJwt.createRefreshToken({
+        username: "bono",
+      });
+
+      await expect(
+        tokenManagerJwt.verifyRefreshToken(refreshToken)
+      ).resolves.not.toThrow(Error);
+    });
+
+    it("should throw an error if verification fails", async () => {
       const tokenManagerJwt = new TokenManagerJwt(Jwt.token);
 
       const accessToken = await tokenManagerJwt.createAccessToken({
-        username: "dicoding",
+        username: "bono",
       });
 
       await expect(
@@ -66,18 +79,6 @@ describe("TokenManagerJwt", () => {
         AUTHENTICATION_TOKEN_MANAGER_ERROR.INVALID_REFRESH_TOKEN
       );
     });
-
-    it("should not throw an error if the refresh token is verified", async () => {
-      const tokenManagerJwt = new TokenManagerJwt(Jwt.token);
-
-      const refreshToken = await tokenManagerJwt.createRefreshToken({
-        username: "dicoding",
-      });
-
-      const result = await tokenManagerJwt.verifyRefreshToken(refreshToken);
-
-      expect(result).toEqual(undefined);
-    });
   });
 
   describe("decodePayload method", () => {
@@ -85,13 +86,12 @@ describe("TokenManagerJwt", () => {
       const tokenManagerJwt = new TokenManagerJwt(Jwt.token);
 
       const accessToken = await tokenManagerJwt.createAccessToken({
-        username: "dicoding",
+        username: "bono",
       });
 
-      const { username: expectedUsername } =
-        await tokenManagerJwt.decodePayload(accessToken);
+      const { username } = await tokenManagerJwt.decodePayload(accessToken);
 
-      expect(expectedUsername).toEqual("dicoding");
+      expect(username).toEqual("bono");
     });
   });
 });

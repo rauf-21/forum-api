@@ -1,3 +1,5 @@
+import * as jme from "jest-mock-extended";
+
 import { RegisterUser } from "../../domains/users/entities/register-user";
 import { RegisteredUser } from "../../domains/users/entities/registered-user";
 import { UserRepository } from "../../domains/users/user-repository";
@@ -12,21 +14,20 @@ describe("AddUserUseCase", () => {
       fullname: "Dicoding Indonesia",
     };
 
-    const mockRegisteredUser = new RegisteredUser({
-      id: "user-123",
-      username: useCasePayload.username,
-      fullname: useCasePayload.fullname,
-    });
+    const mockUserRepository = jme.mock<UserRepository>();
 
-    const mockUserRepository = {
-      verifyUsernameIsAvailable: jest.fn().mockResolvedValue(undefined),
-      addUser: jest.fn().mockResolvedValue(mockRegisteredUser),
-    } satisfies Partial<UserRepository> as unknown as UserRepository;
+    mockUserRepository.verifyUsernameIsAvailable.mockResolvedValue(undefined);
+    mockUserRepository.addUser.mockResolvedValue(
+      new RegisteredUser({
+        id: "user-123",
+        username: useCasePayload.username,
+        fullname: useCasePayload.fullname,
+      })
+    );
 
-    const mockPasswordHash = {
-      hash: jest.fn().mockResolvedValue("hashed_password"),
-      verifyPassword: jest.fn(),
-    } satisfies PasswordHash;
+    const mockPasswordHash = jme.mock<PasswordHash>();
+
+    mockPasswordHash.hash.mockResolvedValue("hashed_password");
 
     const getUserUseCase = new AddUserUseCase({
       userRepository: mockUserRepository,

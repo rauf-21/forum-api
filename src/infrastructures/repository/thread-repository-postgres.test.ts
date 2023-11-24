@@ -24,7 +24,12 @@ describe("ThreadRepository postgres", () => {
 
   describe("addThread method", () => {
     it("should be able to add a thread to the database", async () => {
-      const threadRepository = new ThreadRepositoryPostgres(db, nanoid);
+      const fakeIdGenerator = () => "123";
+
+      const threadRepository = new ThreadRepositoryPostgres(
+        db,
+        fakeIdGenerator
+      );
 
       const owner = "user-123";
 
@@ -41,14 +46,14 @@ describe("ThreadRepository postgres", () => {
 
       const addedThread = await threadRepository.addThread(payload);
 
-      expect(addedThread.id).toBeDefined();
+      expect(addedThread.id).toEqual("thread-123");
       expect(addedThread.title).toEqual(payload.title);
       expect(addedThread.owner).toEqual(owner);
     });
   });
 
   describe("verifyThreadIsExists method", () => {
-    it("should be able to verify if a thread exists in the database", async () => {
+    it("should be able to verify if a thread exists", async () => {
       const threadRepository = new ThreadRepositoryPostgres(db, nanoid);
 
       const owner = "user-123";
@@ -63,11 +68,9 @@ describe("ThreadRepository postgres", () => {
 
       const addedThread = await threadRepository.addThread(newThread);
 
-      const result = await threadRepository.verifyThreadIsExists(
-        addedThread.id
-      );
-
-      expect(result).toEqual(undefined);
+      await expect(
+        threadRepository.verifyThreadIsExists(addedThread.id)
+      ).resolves.not.toThrow(Error);
     });
 
     it("should be able to verify if a thread does not exist in the database", async () => {
@@ -90,20 +93,20 @@ describe("ThreadRepository postgres", () => {
 
       await UsersTableTestHelper.addUser(addUserPayload);
 
-      const thread = {
+      const newThread = {
         id: "thread-123",
         owner: addUserPayload.id,
       };
 
-      await ThreadsTableTestHelper.addThread(thread);
+      await ThreadsTableTestHelper.addThread(newThread);
 
       const addedThread = await ThreadsTableTestHelper.findThreadById(
-        thread.id
+        newThread.id
       );
 
-      const result = await threadRepository.getThreadById(thread.id);
+      const thread = await threadRepository.getThreadById(newThread.id);
 
-      expect(addedThread).toStrictEqual(result);
+      expect(thread).toStrictEqual(addedThread);
     });
 
     it("should throw an error when the thread is not found", async () => {

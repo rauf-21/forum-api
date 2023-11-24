@@ -1,5 +1,9 @@
+import * as jme from "jest-mock-extended";
+
 import { CommentRepository } from "../../domains/comments/comment-repository";
+import { CommentLocatorContext } from "../../domains/comments/entities/comment-locator-context";
 import { AddedReply } from "../../domains/replies/entites/added-reply";
+import { NewReply } from "../../domains/replies/entites/new-reply";
 import { ReplyRepository } from "../../domains/replies/reply-repository";
 import { ThreadRepository } from "../../domains/threads/thread-repository";
 import { AddReplyUseCase } from "./add-reply-use-case";
@@ -13,23 +17,23 @@ describe("AddReplyUseCase", () => {
       commentId: "comment-123",
     };
 
-    const mockAddedReply = new AddedReply({
-      id: "reply-123",
-      content: useCasePayload.content,
-      owner: useCasePayload.owner,
-    });
+    const mockReplyRepository = jme.mock<ReplyRepository>();
 
-    const mockReplyRepository = {
-      addReply: jest.fn().mockResolvedValue(mockAddedReply),
-    } satisfies Partial<ReplyRepository> as unknown as ReplyRepository;
+    mockReplyRepository.addReply.mockResolvedValue(
+      new AddedReply({
+        id: "reply-123",
+        content: useCasePayload.content,
+        owner: useCasePayload.owner,
+      })
+    );
 
-    const mockThreadRepository = {
-      verifyThreadIsExists: jest.fn().mockResolvedValue(undefined),
-    } satisfies Partial<ThreadRepository> as unknown as ThreadRepository;
+    const mockThreadRepository = jme.mock<ThreadRepository>();
 
-    const mockCommentRepository = {
-      verifyCommentIsExists: jest.fn().mockResolvedValue(undefined),
-    } satisfies Partial<CommentRepository> as unknown as CommentRepository;
+    mockThreadRepository.verifyThreadIsExists.mockResolvedValue(undefined);
+
+    const mockCommentRepository = jme.mock<CommentRepository>();
+
+    mockCommentRepository.verifyCommentIsExists.mockResolvedValue(undefined);
 
     const addReplyUseCase = new AddReplyUseCase({
       replyRepository: mockReplyRepository,
@@ -39,14 +43,24 @@ describe("AddReplyUseCase", () => {
 
     const addedReply = await addReplyUseCase.execute(useCasePayload);
 
-    expect(addedReply).toEqual(mockAddedReply);
-    expect(mockReplyRepository.addReply).toHaveBeenCalledWith(useCasePayload);
+    expect(addedReply).toEqual(
+      new AddedReply({
+        id: "reply-123",
+        content: useCasePayload.content,
+        owner: useCasePayload.owner,
+      })
+    );
+    expect(mockReplyRepository.addReply).toHaveBeenCalledWith(
+      new NewReply(useCasePayload)
+    );
     expect(mockThreadRepository.verifyThreadIsExists).toHaveBeenCalledWith(
       useCasePayload.threadId
     );
-    expect(mockCommentRepository.verifyCommentIsExists).toHaveBeenCalledWith({
-      id: useCasePayload.commentId,
-      threadId: useCasePayload.threadId,
-    });
+    expect(mockCommentRepository.verifyCommentIsExists).toHaveBeenCalledWith(
+      new CommentLocatorContext({
+        id: useCasePayload.commentId,
+        threadId: useCasePayload.threadId,
+      })
+    );
   });
 });

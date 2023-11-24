@@ -1,4 +1,8 @@
+import * as jme from "jest-mock-extended";
+
 import { CommentRepository } from "../../domains/comments/comment-repository";
+import { CommentLocatorContext } from "../../domains/comments/entities/comment-locator-context";
+import { CommentOwnerContext } from "../../domains/comments/entities/comment-owner-context";
 import { SoftDeleteCommentUseCase } from "./soft-delete-comment-use-case";
 
 describe("SoftDeleteCommentUseCase", () => {
@@ -9,18 +13,32 @@ describe("SoftDeleteCommentUseCase", () => {
       threadId: "user-123",
     };
 
-    const mockCommentUserRepository = {
-      verifyUserIsCommentOwner: jest.fn().mockResolvedValue(undefined),
-      verifyCommentIsExists: jest.fn().mockResolvedValue(undefined),
-      softDeleteCommentById: jest.fn().mockResolvedValue(undefined),
-    } satisfies Partial<CommentRepository> as unknown as CommentRepository;
+    const mockCommentRepository = jme.mock<CommentRepository>();
+
+    mockCommentRepository.verifyUserIsCommentOwner.mockResolvedValue(undefined);
+    mockCommentRepository.verifyCommentIsExists.mockResolvedValue(undefined);
+    mockCommentRepository.softDeleteCommentById.mockResolvedValue(undefined);
 
     const softDeleteCommentUseCase = new SoftDeleteCommentUseCase({
-      commentRepository: mockCommentUserRepository,
+      commentRepository: mockCommentRepository,
     });
 
-    await expect(
-      softDeleteCommentUseCase.execute(useCasePayload)
-    ).resolves.toEqual(undefined);
+    await softDeleteCommentUseCase.execute(useCasePayload);
+
+    expect(mockCommentRepository.verifyUserIsCommentOwner).toHaveBeenCalledWith(
+      new CommentOwnerContext({
+        id: useCasePayload.id,
+        owner: useCasePayload.owner,
+      })
+    );
+    expect(mockCommentRepository.verifyCommentIsExists).toHaveBeenCalledWith(
+      new CommentLocatorContext({
+        id: useCasePayload.id,
+        threadId: useCasePayload.threadId,
+      })
+    );
+    expect(mockCommentRepository.softDeleteCommentById).toHaveBeenCalledWith(
+      useCasePayload.id
+    );
   });
 });

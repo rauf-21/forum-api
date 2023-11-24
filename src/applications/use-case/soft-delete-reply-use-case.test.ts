@@ -1,3 +1,7 @@
+import * as jme from "jest-mock-extended";
+
+import { ReplyLocatorContext } from "../../domains/replies/entites/reply-locator-context";
+import { ReplyOwnerContext } from "../../domains/replies/entites/reply-owner.context";
 import { ReplyRepository } from "../../domains/replies/reply-repository";
 import { SoftDeleteReplyUseCase } from "./soft-delete-reply-use-case";
 
@@ -10,18 +14,32 @@ describe("SoftDeleteReplyUseCase", () => {
       commentId: "comment-123",
     };
 
-    const mockReplyRepository = {
-      verifyUserIsReplyOwner: jest.fn().mockResolvedValue(undefined),
-      verifyReplyIsExists: jest.fn().mockResolvedValue(undefined),
-      softDeleteReplyById: jest.fn().mockResolvedValue(undefined),
-    } satisfies Partial<ReplyRepository> as unknown as ReplyRepository;
+    const mockReplyRepository = jme.mock<ReplyRepository>();
+
+    mockReplyRepository.verifyUserIsReplyOwner.mockResolvedValue(undefined);
+    mockReplyRepository.verifyReplyIsExists.mockResolvedValue(undefined);
+    mockReplyRepository.softDeleteReplyById.mockResolvedValue(undefined);
 
     const softDeleteReplyUseCase = new SoftDeleteReplyUseCase({
       replyRepository: mockReplyRepository,
     });
 
-    await expect(
-      softDeleteReplyUseCase.execute(useCasePayload)
-    ).resolves.toEqual(undefined);
+    await softDeleteReplyUseCase.execute(useCasePayload);
+
+    expect(mockReplyRepository.verifyUserIsReplyOwner).toHaveBeenCalledWith(
+      new ReplyOwnerContext({
+        id: useCasePayload.id,
+        owner: useCasePayload.owner,
+      })
+    );
+    expect(mockReplyRepository.verifyReplyIsExists).toHaveBeenCalledWith(
+      new ReplyLocatorContext({
+        id: useCasePayload.id,
+        commentId: useCasePayload.commentId,
+      })
+    );
+    expect(mockReplyRepository.softDeleteReplyById).toHaveBeenCalledWith(
+      useCasePayload.id
+    );
   });
 });

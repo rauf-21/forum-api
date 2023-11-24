@@ -24,27 +24,24 @@ describe("PasswordHashBcrypt", () => {
   });
 
   describe("comparePassword method", () => {
-    it("should throw an error if the password does not match", async () => {
-      const passwordHashBcrypt = new PasswordHashBcrypt(Bcrypt);
-
-      await expect(
-        passwordHashBcrypt.verifyPassword("plain_password", "hashed_password")
-      ).rejects.toThrow(PASSWORD_HASH_ERROR.INCORRECT_CREDENTIALS);
-    });
-
-    it("should not return an error if the password matches", async () => {
+    it("should be able to compare plain password and hashed password", async () => {
       const passwordHashBcrypt = new PasswordHashBcrypt(Bcrypt);
 
       const plainPassword = "secret";
 
       const hashedPassword = await passwordHashBcrypt.hash(plainPassword);
 
-      const result = await passwordHashBcrypt.verifyPassword(
-        plainPassword,
-        hashedPassword
-      );
+      await expect(
+        passwordHashBcrypt.verifyPassword(plainPassword, hashedPassword)
+      ).resolves.not.toThrow(Error);
+    });
 
-      expect(result).toEqual(undefined);
+    it("should throw an error if the password does not match", async () => {
+      const passwordHashBcrypt = new PasswordHashBcrypt(Bcrypt);
+
+      await expect(
+        passwordHashBcrypt.verifyPassword("plain_password", "hashed_password")
+      ).rejects.toThrow(PASSWORD_HASH_ERROR.INCORRECT_CREDENTIALS);
     });
   });
 });
