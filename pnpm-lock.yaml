@@ -82,24 +82,12 @@ devDependencies:
   eslint-plugin-simple-import-sort:
     specifier: ^10.0.0
     version: 10.0.0(eslint@8.52.0)
-  eslint-plugin^5:
-    specifier: link:@typescript-eslint/eslint-plugin^5
-    version: link:@typescript-eslint/eslint-plugin^5
-  eslint-plugin^6.0.0:
-    specifier: link:@typescript-eslint/eslint-plugin^6.0.0
-    version: link:@typescript-eslint/eslint-plugin^6.0.0
   jest:
     specifier: ^29.7.0
     version: 29.7.0(@types/node@20.8.9)
   jest-mock-extended:
     specifier: ^3.0.5
     version: 3.0.5(jest@29.7.0)(typescript@4.9.5)
-  parser^5:
-    specifier: link:@typescript-eslint/parser^5
-    version: link:@typescript-eslint/parser^5
-  parser^6.0.0:
-    specifier: link:@typescript-eslint/parser^6.0.0
-    version: link:@typescript-eslint/parser^6.0.0
   prettier:
     specifier: ^3.0.3
     version: 3.0.3

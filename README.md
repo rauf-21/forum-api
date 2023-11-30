@@ -2,7 +2,7 @@
 
 ## Cara Setup
 
-- Jalankan command `npm install`.
+- Jalankan command `npm install` atau `pnpm install`.
 - Buat 2 database untuk **development** dan **test** environment.
 - Copy file `.env.development.local.example` dan `.env.test.local.example`.
 - Ubah name file yang telah di-copy menjadi `.env.development.local` dan `.env.test.local`.
