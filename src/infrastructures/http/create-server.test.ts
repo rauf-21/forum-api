@@ -3,7 +3,7 @@ import { createServer, CreateServerDependencies } from "./create-server";
 describe("HTTP server", () => {
   it("should have a response with a 404 status code if there is a request to an unregistered route", async () => {
     const server = await createServer(
-      {} satisfies Partial<CreateServerDependencies> as unknown as CreateServerDependencies
+      {} satisfies Partial<CreateServerDependencies> as CreateServerDependencies
     );
 
     const response = await server.inject({
@@ -22,7 +22,7 @@ describe("HTTP server", () => {
     };
 
     const server = await createServer(
-      {} satisfies Partial<CreateServerDependencies> as unknown as CreateServerDependencies
+      {} satisfies Partial<CreateServerDependencies> as CreateServerDependencies
     );
 
     const response = await server.inject({

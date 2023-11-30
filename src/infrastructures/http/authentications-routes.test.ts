@@ -38,146 +38,153 @@ describe("/authentications endpoint", () => {
 
   describe("when POST /authentications", () => {
     it("should have a response with a 201 status code and return new authentication", async () => {
-      const requestPayload = {
-        username: "dicoding",
-        password: "secret",
-      };
-
       const server = await createServer({
         addUserUseCase,
         loginUserUseCase,
-      } satisfies Partial<CreateServerDependencies> as unknown as CreateServerDependencies);
+      } satisfies Partial<CreateServerDependencies> as CreateServerDependencies);
+
+      const addUserPayload = {
+        username: "dicoding",
+        password: "secret",
+        fullname: "Dicoding Indonesia",
+      };
 
       await server.inject({
         method: "POST",
         url: "/users",
+        payload: addUserPayload,
+      });
+
+      const loginUserResponse = await server.inject({
+        method: "POST",
+        url: "/authentications",
         payload: {
-          username: "dicoding",
-          password: "secret",
-          fullname: "Dicoding Indonesia",
+          username: addUserPayload.username,
+          password: addUserPayload.password,
         },
       });
 
-      const response = await server.inject({
-        method: "POST",
-        url: "/authentications",
-        payload: requestPayload,
-      });
+      const loginUserResponsePayloadJson = JSON.parse(
+        loginUserResponse.payload
+      );
 
-      const responseJson = JSON.parse(response.payload);
-
-      expect(response.statusCode).toEqual(201);
-      expect(responseJson.status).toEqual("success");
-      expect(responseJson.data.accessToken).toBeDefined();
-      expect(responseJson.data.refreshToken).toBeDefined();
+      expect(loginUserResponse.statusCode).toEqual(201);
+      expect(loginUserResponsePayloadJson.status).toEqual("success");
+      expect(typeof loginUserResponsePayloadJson.data.accessToken).toEqual(
+        "string"
+      );
+      expect(typeof loginUserResponsePayloadJson.data.refreshToken).toEqual(
+        "string"
+      );
     });
 
     it("should have a response with a 400 status code if the payload has missing property", async () => {
-      const requestPayload = {
-        username: "dicoding",
-      };
-
       const server = await createServer({
         loginUserUseCase,
-      } satisfies Partial<CreateServerDependencies> as unknown as CreateServerDependencies);
+      } satisfies Partial<CreateServerDependencies> as CreateServerDependencies);
 
-      const response = await server.inject({
+      const loginUserResponse = await server.inject({
         method: "POST",
         url: "/authentications",
-        payload: requestPayload,
+        payload: {
+          username: "dicoding",
+        },
       });
 
-      const responseJson = JSON.parse(response.payload);
+      const loginUserResponsePayloadJson = JSON.parse(
+        loginUserResponse.payload
+      );
 
-      expect(response.statusCode).toEqual(400);
-      expect(responseJson.status).toEqual("fail");
-      expect(responseJson.message).toEqual(
+      expect(loginUserResponse.statusCode).toEqual(400);
+      expect(loginUserResponsePayloadJson.status).toEqual("fail");
+      expect(loginUserResponsePayloadJson.message).toEqual(
         USER_LOGIN_ERROR_MESSAGE.MISSING_PROPERTY
       );
     });
 
     it("should have a response with a 400 status code if the payload has an invalid data type", async () => {
-      const requestPayload = {
-        username: 123,
-        password: "secret",
-      };
-
       const server = await createServer({
         loginUserUseCase,
-      } satisfies Partial<CreateServerDependencies> as unknown as CreateServerDependencies);
+      } satisfies Partial<CreateServerDependencies> as CreateServerDependencies);
 
-      const response = await server.inject({
+      const loginUserResponse = await server.inject({
         method: "POST",
         url: "/authentications",
-        payload: requestPayload,
+        payload: {
+          username: 123,
+        },
       });
 
-      const responseJson = JSON.parse(response.payload);
+      const loginUserResponsePayloadJson = JSON.parse(
+        loginUserResponse.payload
+      );
 
-      expect(response.statusCode).toEqual(400);
-      expect(responseJson.status).toEqual("fail");
-      expect(responseJson.message).toEqual(
+      expect(loginUserResponse.statusCode).toEqual(400);
+      expect(loginUserResponsePayloadJson.status).toEqual("fail");
+      expect(loginUserResponsePayloadJson.message).toEqual(
         USER_LOGIN_ERROR_MESSAGE.INVALID_DATA_TYPE
       );
     });
 
     it("should have a response with a 400 status code if the username is not found", async () => {
-      const requestPayload = {
-        username: "dicoding",
-        password: "secret",
-      };
-
       const server = await createServer({
         loginUserUseCase,
-      } satisfies Partial<CreateServerDependencies> as unknown as CreateServerDependencies);
+      } satisfies Partial<CreateServerDependencies> as CreateServerDependencies);
 
-      const response = await server.inject({
+      const loginUserResponse = await server.inject({
         method: "POST",
         url: "/authentications",
-        payload: requestPayload,
+        payload: {
+          username: "dicoding",
+          password: "secret",
+        },
       });
 
-      const responseJson = JSON.parse(response.payload);
+      const loginUserResponsePayloadJson = JSON.parse(
+        loginUserResponse.payload
+      );
 
-      expect(response.statusCode).toEqual(400);
-      expect(responseJson.status).toEqual("fail");
-      expect(responseJson.message).toEqual(
+      expect(loginUserResponse.statusCode).toEqual(400);
+      expect(loginUserResponsePayloadJson.status).toEqual("fail");
+      expect(loginUserResponsePayloadJson.message).toEqual(
         USER_REPOSITORY_ERROR_MESSAGE.USERNAME_NOT_FOUND
       );
     });
 
     it("should have a response with a 401 status code if the password is incorrect", async () => {
-      const requestPayload = {
-        username: "dicoding",
-        password: "wrong_password",
-      };
-
       const server = await createServer({
         addUserUseCase,
         loginUserUseCase,
-      } satisfies Partial<CreateServerDependencies> as unknown as CreateServerDependencies);
+      } satisfies Partial<CreateServerDependencies> as CreateServerDependencies);
+
+      const addUserPayload = {
+        username: "dicoding",
+        password: "secret",
+        fullname: "Dicoding Indonesia",
+      };
 
       await server.inject({
         method: "POST",
         url: "/users",
+        payload: addUserPayload,
+      });
+
+      const loginUserResponse = await server.inject({
+        method: "POST",
+        url: "/authentications",
         payload: {
-          username: "dicoding",
-          password: "secret",
-          fullname: "Dicoding Indonesia",
+          username: addUserPayload.username,
+          password: "incorrect-password",
         },
       });
 
-      const response = await server.inject({
-        method: "POST",
-        url: "/authentications",
-        payload: requestPayload,
-      });
+      const loginUserResponsePayloadJson = JSON.parse(
+        loginUserResponse.payload
+      );
 
-      const responseJson = JSON.parse(response.payload);
-
-      expect(response.statusCode).toEqual(401);
-      expect(responseJson.status).toEqual("fail");
-      expect(responseJson.message).toEqual(
+      expect(loginUserResponse.statusCode).toEqual(401);
+      expect(loginUserResponsePayloadJson.status).toEqual("fail");
+      expect(loginUserResponsePayloadJson.message).toEqual(
         PASSWORD_HASH_ERROR_MESSAGE.INCORRECT_CREDENTIALS
       );
     });
@@ -189,62 +196,72 @@ describe("/authentications endpoint", () => {
         addUserUseCase,
         loginUserUseCase,
         refreshAuthenticationUseCase,
-      } satisfies Partial<CreateServerDependencies> as unknown as CreateServerDependencies);
+      } satisfies Partial<CreateServerDependencies> as CreateServerDependencies);
+
+      const addUserPayload = {
+        username: "dicoding",
+        password: "secret",
+        fullname: "Dicoding Indonesia",
+      };
 
       await server.inject({
         method: "POST",
         url: "/users",
-        payload: {
-          username: "dicoding",
-          password: "secret",
-          fullname: "Dicoding Indonesia",
-        },
+        payload: addUserPayload,
       });
 
-      const loginResponse = await server.inject({
+      const loginUserResponse = await server.inject({
         method: "POST",
         url: "/authentications",
         payload: {
-          username: "dicoding",
-          password: "secret",
+          username: addUserPayload.username,
+          password: addUserPayload.password,
         },
       });
 
-      const {
-        data: { refreshToken },
-      } = JSON.parse(loginResponse.payload);
+      const loginUserResponsePayloadJson = JSON.parse(
+        loginUserResponse.payload
+      );
 
-      const response = await server.inject({
+      const refreshAuthenticationResponse = await server.inject({
         method: "PUT",
         url: "/authentications",
         payload: {
-          refreshToken,
+          refreshToken: loginUserResponsePayloadJson.data.refreshToken,
         },
       });
 
-      const responseJson = JSON.parse(response.payload);
+      const refreshAuthenticationResponsePayloadJson = JSON.parse(
+        refreshAuthenticationResponse.payload
+      );
 
-      expect(response.statusCode).toEqual(200);
-      expect(responseJson.status).toEqual("success");
-      expect(responseJson.data.accessToken).toBeDefined();
+      expect(refreshAuthenticationResponse.statusCode).toEqual(200);
+      expect(refreshAuthenticationResponsePayloadJson.status).toEqual(
+        "success"
+      );
+      expect(
+        typeof refreshAuthenticationResponsePayloadJson.data.accessToken
+      ).toEqual("string");
     });
 
     it("should have a response with a 400 status code if the payload has a missing refresh token", async () => {
       const server = await createServer({
         refreshAuthenticationUseCase,
-      } satisfies Partial<CreateServerDependencies> as unknown as CreateServerDependencies);
+      } satisfies Partial<CreateServerDependencies> as CreateServerDependencies);
 
-      const response = await server.inject({
+      const refreshAuthenticationResponse = await server.inject({
         method: "PUT",
         url: "/authentications",
         payload: {},
       });
 
-      const responseJson = JSON.parse(response.payload);
+      const refreshAuthenticationResponsePayloadJson = JSON.parse(
+        refreshAuthenticationResponse.payload
+      );
 
-      expect(response.statusCode).toEqual(400);
-      expect(responseJson.status).toEqual("fail");
-      expect(responseJson.message).toEqual(
+      expect(refreshAuthenticationResponse.statusCode).toEqual(400);
+      expect(refreshAuthenticationResponsePayloadJson.status).toEqual("fail");
+      expect(refreshAuthenticationResponsePayloadJson.message).toEqual(
         REFRESH_AUTHENTICATION_USE_CASE_ERROR_MESSAGE.MISSING_REFRESH_TOKEN
       );
     });
@@ -252,9 +269,9 @@ describe("/authentications endpoint", () => {
     it("should have a response with a 400 status code if the refresh token is not a string", async () => {
       const server = await createServer({
         refreshAuthenticationUseCase,
-      } satisfies Partial<CreateServerDependencies> as unknown as CreateServerDependencies);
+      } satisfies Partial<CreateServerDependencies> as CreateServerDependencies);
 
-      const response = await server.inject({
+      const refreshAuthenticationResponse = await server.inject({
         method: "PUT",
         url: "/authentications",
         payload: {
@@ -262,11 +279,13 @@ describe("/authentications endpoint", () => {
         },
       });
 
-      const responseJson = JSON.parse(response.payload);
+      const refreshAuthenticationResponsePayloadJson = JSON.parse(
+        refreshAuthenticationResponse.payload
+      );
 
-      expect(response.statusCode).toEqual(400);
-      expect(responseJson.status).toEqual("fail");
-      expect(responseJson.message).toEqual(
+      expect(refreshAuthenticationResponse.statusCode).toEqual(400);
+      expect(refreshAuthenticationResponsePayloadJson.status).toEqual("fail");
+      expect(refreshAuthenticationResponsePayloadJson.message).toEqual(
         REFRESH_AUTHENTICATION_USE_CASE_ERROR_MESSAGE.INVALID_REFRESH_TOKEN_DATA_TYPE
       );
     });
@@ -274,9 +293,9 @@ describe("/authentications endpoint", () => {
     it("should have a response with a 400 status code if the refresh token is not valid", async () => {
       const server = await createServer({
         refreshAuthenticationUseCase,
-      } satisfies Partial<CreateServerDependencies> as unknown as CreateServerDependencies);
+      } satisfies Partial<CreateServerDependencies> as CreateServerDependencies);
 
-      const response = await server.inject({
+      const refreshAuthenticationResponse = await server.inject({
         method: "PUT",
         url: "/authentications",
         payload: {
@@ -284,10 +303,13 @@ describe("/authentications endpoint", () => {
         },
       });
 
-      const responseJson = JSON.parse(response.payload);
-      expect(response.statusCode).toEqual(400);
-      expect(responseJson.status).toEqual("fail");
-      expect(responseJson.message).toEqual(
+      const refreshAuthenticationResponsePayloadJson = JSON.parse(
+        refreshAuthenticationResponse.payload
+      );
+
+      expect(refreshAuthenticationResponse.statusCode).toEqual(400);
+      expect(refreshAuthenticationResponsePayloadJson.status).toEqual("fail");
+      expect(refreshAuthenticationResponsePayloadJson.message).toEqual(
         AUTHENTICATION_TOKEN_MANAGER_ERROR_MESSAGE.INVALID_REFRESH_TOKEN
       );
     });
@@ -295,13 +317,16 @@ describe("/authentications endpoint", () => {
     it("should have a response with a 400 status code if the refresh token is not registered in the database", async () => {
       const server = await createServer({
         refreshAuthenticationUseCase,
-      } satisfies Partial<CreateServerDependencies> as unknown as CreateServerDependencies);
+      } satisfies Partial<CreateServerDependencies> as CreateServerDependencies);
 
       const refreshToken = await container
         .resolve("authenticationTokenManager")
-        .createRefreshToken({ username: "dicoding" });
+        .createRefreshToken({
+          id: "user-123",
+          username: "dicoding",
+        });
 
-      const response = await server.inject({
+      const refreshAuthenticationResponse = await server.inject({
         method: "PUT",
         url: "/authentications",
         payload: {
@@ -309,11 +334,13 @@ describe("/authentications endpoint", () => {
         },
       });
 
-      const responseJson = JSON.parse(response.payload);
+      const refreshAuthenticationResponsePayloadJson = JSON.parse(
+        refreshAuthenticationResponse.payload
+      );
 
-      expect(response.statusCode).toEqual(400);
-      expect(responseJson.status).toEqual("fail");
-      expect(responseJson.message).toEqual(
+      expect(refreshAuthenticationResponse.statusCode).toEqual(400);
+      expect(refreshAuthenticationResponsePayloadJson.status).toEqual("fail");
+      expect(refreshAuthenticationResponsePayloadJson.message).toEqual(
         AUTHENTICATION_REPOSITORY_ERROR_MESSAGE.REFRESH_TOKEN_NOT_FOUND
       );
     });
@@ -323,13 +350,13 @@ describe("/authentications endpoint", () => {
     it("should have a response with a 200 status code if the refresh token is valid", async () => {
       const server = await createServer({
         logoutUserUseCase,
-      } satisfies Partial<CreateServerDependencies> as unknown as CreateServerDependencies);
+      } satisfies Partial<CreateServerDependencies> as CreateServerDependencies);
 
       const refreshToken = "refresh_token";
 
       await AuthenticationsTableTestHelper.addToken(refreshToken);
 
-      const response = await server.inject({
+      const logoutUserResponse = await server.inject({
         method: "DELETE",
         url: "/authentications",
         payload: {
@@ -337,32 +364,34 @@ describe("/authentications endpoint", () => {
         },
       });
 
-      const responseJson = JSON.parse(response.payload);
+      const logoutUserResponsePayloadJson = JSON.parse(
+        logoutUserResponse.payload
+      );
 
-      expect(response.statusCode).toEqual(200);
-      expect(responseJson.status).toEqual("success");
+      expect(logoutUserResponse.statusCode).toEqual(200);
+      expect(logoutUserResponsePayloadJson.status).toEqual("success");
     });
 
     it("should have a response with a 400 status code if the refresh token is not registered in the database", async () => {
       const server = await createServer({
         logoutUserUseCase,
-      } satisfies Partial<CreateServerDependencies> as unknown as CreateServerDependencies);
+      } satisfies Partial<CreateServerDependencies> as CreateServerDependencies);
 
-      const refreshToken = "refresh_token";
-
-      const response = await server.inject({
+      const logoutUserResponse = await server.inject({
         method: "DELETE",
         url: "/authentications",
         payload: {
-          refreshToken,
+          refreshToken: "refresh-token",
         },
       });
 
-      const responseJson = JSON.parse(response.payload);
+      const logoutUserResponsePayloadJson = JSON.parse(
+        logoutUserResponse.payload
+      );
 
-      expect(response.statusCode).toEqual(400);
-      expect(responseJson.status).toEqual("fail");
-      expect(responseJson.message).toEqual(
+      expect(logoutUserResponse.statusCode).toEqual(400);
+      expect(logoutUserResponsePayloadJson.status).toEqual("fail");
+      expect(logoutUserResponsePayloadJson.message).toEqual(
         AUTHENTICATION_REPOSITORY_ERROR_MESSAGE.REFRESH_TOKEN_NOT_FOUND
       );
     });
@@ -370,19 +399,21 @@ describe("/authentications endpoint", () => {
     it("should have a response with a 400 status code if the payload has a missing refresh token", async () => {
       const server = await createServer({
         logoutUserUseCase,
-      } satisfies Partial<CreateServerDependencies> as unknown as CreateServerDependencies);
+      } satisfies Partial<CreateServerDependencies> as CreateServerDependencies);
 
-      const response = await server.inject({
+      const logoutUserResponse = await server.inject({
         method: "DELETE",
         url: "/authentications",
         payload: {},
       });
 
-      const responseJson = JSON.parse(response.payload);
+      const logoutUserResponsePayloadJson = JSON.parse(
+        logoutUserResponse.payload
+      );
 
-      expect(response.statusCode).toEqual(400);
-      expect(responseJson.status).toEqual("fail");
-      expect(responseJson.message).toEqual(
+      expect(logoutUserResponse.statusCode).toEqual(400);
+      expect(logoutUserResponsePayloadJson.status).toEqual("fail");
+      expect(logoutUserResponsePayloadJson.message).toEqual(
         DELETE_AUTHENTICATION_USE_CASE_ERROR_MESSAGE.MISSING_REFRESH_TOKEN
       );
     });
@@ -390,9 +421,9 @@ describe("/authentications endpoint", () => {
     it("should have a response with a 400 status code if the refresh token is not a string", async () => {
       const server = await createServer({
         logoutUserUseCase,
-      } satisfies Partial<CreateServerDependencies> as unknown as CreateServerDependencies);
+      } satisfies Partial<CreateServerDependencies> as CreateServerDependencies);
 
-      const response = await server.inject({
+      const logoutUserResponse = await server.inject({
         method: "DELETE",
         url: "/authentications",
         payload: {
@@ -400,11 +431,13 @@ describe("/authentications endpoint", () => {
         },
       });
 
-      const responseJson = JSON.parse(response.payload);
+      const logoutUserResponsePayloadJson = JSON.parse(
+        logoutUserResponse.payload
+      );
 
-      expect(response.statusCode).toEqual(400);
-      expect(responseJson.status).toEqual("fail");
-      expect(responseJson.message).toEqual(
+      expect(logoutUserResponse.statusCode).toEqual(400);
+      expect(logoutUserResponsePayloadJson.status).toEqual("fail");
+      expect(logoutUserResponsePayloadJson.message).toEqual(
         DELETE_AUTHENTICATION_USE_CASE_ERROR_MESSAGE.INVALID_REFRESH_TOKEN_DATA_TYPE
       );
     });

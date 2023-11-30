@@ -1,3 +1,5 @@
+import "core-js/actual";
+
 import DotenvExpand from "dotenv-expand";
 import DotenvFlow from "dotenv-flow";
 import { Cli } from "kysely-codegen";

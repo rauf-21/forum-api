@@ -22,159 +22,149 @@ describe("/users endpoint", () => {
 
   describe("when POST /users", () => {
     it("should have a response with a 201 status code and return the persisted user", async () => {
-      const requestPayload = {
+      const server = await createServer({
+        addUserUseCase,
+      } satisfies Partial<CreateServerDependencies> as CreateServerDependencies);
+
+      const addUserPayload = {
         username: "dicoding",
         password: "secret",
         fullname: "Dicoding Indonesia",
       };
 
-      const server = await createServer({
-        addUserUseCase,
-      } satisfies Partial<CreateServerDependencies> as unknown as CreateServerDependencies);
-
-      const response = await server.inject({
+      const addUserResponse = await server.inject({
         method: "POST",
         url: "/users",
-        payload: requestPayload,
+        payload: addUserPayload,
       });
 
-      const responseJson = JSON.parse(response.payload);
+      const addUserResponsePayloadJson = JSON.parse(addUserResponse.payload);
 
-      expect(response.statusCode).toEqual(201);
-      expect(responseJson.status).toEqual("success");
-      expect(responseJson.data.addedUser).toBeDefined();
+      const { addedUser } = addUserResponsePayloadJson.data;
+
+      expect(addUserResponse.statusCode).toEqual(201);
+      expect(addUserResponsePayloadJson.status).toEqual("success");
+      expect(typeof addedUser.id).toEqual("string");
+      expect(addedUser.username).toEqual(addUserPayload.username);
+      expect(addedUser.fullname).toEqual(addUserPayload.fullname);
     });
 
     it("should have a response with a 400 status code if the payload has a missing property", async () => {
-      const requestPayload = {
-        fullname: "Dicoding Indonesia",
-        password: "secret",
-      };
-
       const server = await createServer({
         addUserUseCase,
-      } satisfies Partial<CreateServerDependencies> as unknown as CreateServerDependencies);
+      } satisfies Partial<CreateServerDependencies> as CreateServerDependencies);
 
-      const response = await server.inject({
+      const addUserResponse = await server.inject({
         method: "POST",
         url: "/users",
-        payload: requestPayload,
+        payload: {},
       });
 
-      const responseJson = JSON.parse(response.payload);
+      const addUserResponsePayloadJson = JSON.parse(addUserResponse.payload);
 
-      expect(response.statusCode).toEqual(400);
-      expect(responseJson.status).toEqual("fail");
-      expect(responseJson.message).toEqual(
+      expect(addUserResponse.statusCode).toEqual(400);
+      expect(addUserResponsePayloadJson.status).toEqual("fail");
+      expect(addUserResponsePayloadJson.message).toEqual(
         REGISTER_USER_ERROR_MESSAGE.MISSING_PROPERTY
       );
     });
 
     it("should have a response with a 400 status code if the payload has an invalid data type", async () => {
-      const requestPayload = {
-        username: "dicoding",
-        password: "secret",
-        fullname: ["Dicoding Indonesia"],
-      };
-
       const server = await createServer({
         addUserUseCase,
-      } satisfies Partial<CreateServerDependencies> as unknown as CreateServerDependencies);
+      } satisfies Partial<CreateServerDependencies> as CreateServerDependencies);
 
-      const response = await server.inject({
+      const addUserResponse = await server.inject({
         method: "POST",
         url: "/users",
-        payload: requestPayload,
+        payload: {
+          username: 123,
+        },
       });
 
-      const responseJson = JSON.parse(response.payload);
+      const addUserResponsePayloadJson = JSON.parse(addUserResponse.payload);
 
-      expect(response.statusCode).toEqual(400);
-      expect(responseJson.status).toEqual("fail");
-      expect(responseJson.message).toEqual(
+      expect(addUserResponse.statusCode).toEqual(400);
+      expect(addUserResponsePayloadJson.status).toEqual("fail");
+      expect(addUserResponsePayloadJson.message).toEqual(
         REGISTER_USER_ERROR_MESSAGE.INVALID_DATA_TYPE
       );
     });
 
     it("should have a response with a 400 status code if the username contains more than 50 characters", async () => {
-      const requestPayload = {
-        username: "dicodingindonesiadicodingindonesiadicodingindonesiadicoding",
-        password: "secret",
-        fullname: "Dicoding Indonesia",
-      };
-
       const server = await createServer({
         addUserUseCase,
-      } satisfies Partial<CreateServerDependencies> as unknown as CreateServerDependencies);
+      } satisfies Partial<CreateServerDependencies> as CreateServerDependencies);
 
-      const response = await server.inject({
+      const addUserResponse = await server.inject({
         method: "POST",
         url: "/users",
-        payload: requestPayload,
+        payload: {
+          username:
+            "dicodingindonesiadicodingindonesiadicodingindonesiadicoding",
+          password: "secret",
+          fullname: "Dicoding Indonesia",
+        },
       });
 
-      const responseJson = JSON.parse(response.payload);
+      const addUserResponsePayloadJson = JSON.parse(addUserResponse.payload);
 
-      expect(response.statusCode).toEqual(400);
-      expect(responseJson.status).toEqual("fail");
-      expect(responseJson.message).toEqual(
+      expect(addUserResponse.statusCode).toEqual(400);
+      expect(addUserResponsePayloadJson.status).toEqual("fail");
+      expect(addUserResponsePayloadJson.message).toEqual(
         REGISTER_USER_ERROR_MESSAGE.USERNAME_EXCEEDS_THE_CHARACTER_LIMIT
       );
     });
 
     it("should have a response with a 400 status code if the username contains a restricted character", async () => {
-      const requestPayload = {
-        username: "dicoding indonesia",
-        password: "secret",
-        fullname: "Dicoding Indonesia",
-      };
-
       const server = await createServer({
         addUserUseCase,
-      } satisfies Partial<CreateServerDependencies> as unknown as CreateServerDependencies);
+      } satisfies Partial<CreateServerDependencies> as CreateServerDependencies);
 
-      const response = await server.inject({
+      const addUserResponse = await server.inject({
         method: "POST",
         url: "/users",
-        payload: requestPayload,
+        payload: {
+          username: "dicoding indonesia",
+          password: "secret",
+          fullname: "Dicoding Indonesia",
+        },
       });
 
-      const responseJson = JSON.parse(response.payload);
+      const addUserResponsePayloadJson = JSON.parse(addUserResponse.payload);
 
-      expect(response.statusCode).toEqual(400);
-      expect(responseJson.status).toEqual("fail");
-      expect(responseJson.message).toEqual(
+      expect(addUserResponse.statusCode).toEqual(400);
+      expect(addUserResponsePayloadJson.status).toEqual("fail");
+      expect(addUserResponsePayloadJson.message).toEqual(
         REGISTER_USER_ERROR_MESSAGE.USERNAME_CONTAINS_A_RESTRICTED_CHARACTER
       );
     });
 
     it("should have a response with a 400 status code if the username is not available", async () => {
+      const server = await createServer({
+        addUserUseCase,
+      } satisfies Partial<CreateServerDependencies> as CreateServerDependencies);
+
       await UsersTableTestHelper.addUser({
         id: "user-123",
         username: "dicoding",
       });
 
-      const requestPayload = {
-        username: "dicoding",
-        fullname: "Dicoding Indonesia",
-        password: "super_secret",
-      };
-
-      const server = await createServer({
-        addUserUseCase,
-      } satisfies Partial<CreateServerDependencies> as unknown as CreateServerDependencies);
-
-      const response = await server.inject({
+      const addUserResponse = await server.inject({
         method: "POST",
         url: "/users",
-        payload: requestPayload,
+        payload: {
+          username: "dicoding",
+          fullname: "Dicoding Indonesia",
+          password: "super_secret",
+        },
       });
 
-      const responseJson = JSON.parse(response.payload);
+      const addUserResponsePayloadJson = JSON.parse(addUserResponse.payload);
 
-      expect(response.statusCode).toEqual(400);
-      expect(responseJson.status).toEqual("fail");
-      expect(responseJson.message).toEqual(
+      expect(addUserResponse.statusCode).toEqual(400);
+      expect(addUserResponsePayloadJson.status).toEqual("fail");
+      expect(addUserResponsePayloadJson.message).toEqual(
         USER_REPOSITORY_ERROR_MESSAGE.USERNAME_NOT_FOUND
       );
     });

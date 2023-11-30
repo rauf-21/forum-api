@@ -42,7 +42,7 @@ describe("/threads endpoint", () => {
         addUserUseCase,
         loginUserUseCase,
         addThreadUseCase,
-      } satisfies Partial<CreateServerDependencies> as unknown as CreateServerDependencies);
+      } satisfies Partial<CreateServerDependencies> as CreateServerDependencies);
 
       const addUserPayload = {
         username: "bono",
@@ -95,7 +95,7 @@ describe("/threads endpoint", () => {
 
       expect(addThreadResponse.statusCode).toEqual(201);
       expect(addThreadResponsePayloadJson.status).toEqual("success");
-      expect(addedThread.id).toBeDefined();
+      expect(typeof addedThread.id).toEqual("string");
       expect(addedThread.title).toEqual(addThreadPayload.title);
       expect(addedThread.owner).toEqual(addedUser.id);
     });
@@ -105,7 +105,7 @@ describe("/threads endpoint", () => {
         addUserUseCase,
         loginUserUseCase,
         addThreadUseCase,
-      } satisfies Partial<CreateServerDependencies> as unknown as CreateServerDependencies);
+      } satisfies Partial<CreateServerDependencies> as CreateServerDependencies);
 
       const addUserPayload = {
         username: "bono",
@@ -132,14 +132,12 @@ describe("/threads endpoint", () => {
         loginUserResponse.payload
       );
 
-      const addThreadPayload = {
-        title: "this is a title",
-      };
-
       const addThreadResponse = await server.inject({
         method: "POST",
         url: "/threads",
-        payload: addThreadPayload,
+        payload: {
+          title: "this is a title",
+        },
         headers: {
           authorization: `Bearer ${loginUserResponsePayloadJson.data.accessToken}`,
         },
@@ -161,7 +159,7 @@ describe("/threads endpoint", () => {
         addUserUseCase,
         loginUserUseCase,
         addThreadUseCase,
-      } satisfies Partial<CreateServerDependencies> as unknown as CreateServerDependencies);
+      } satisfies Partial<CreateServerDependencies> as CreateServerDependencies);
 
       const addUserPayload = {
         username: "bono",
@@ -191,7 +189,7 @@ describe("/threads endpoint", () => {
       const addThreadResponse = await server.inject({
         method: "POST",
         url: "/threads",
-        payload: Buffer.from("123"),
+        payload: "123",
         headers: {
           authorization: `Bearer ${loginUserResponsePayloadJson.data.accessToken}`,
         },
@@ -213,7 +211,7 @@ describe("/threads endpoint", () => {
         addUserUseCase,
         loginUserUseCase,
         addThreadUseCase,
-      } satisfies Partial<CreateServerDependencies> as unknown as CreateServerDependencies);
+      } satisfies Partial<CreateServerDependencies> as CreateServerDependencies);
 
       await server.inject({
         method: "POST",
@@ -254,7 +252,7 @@ describe("/threads endpoint", () => {
         addCommentUseCase,
         addReplyUseCase,
         getThreadDetailUseCase,
-      } satisfies Partial<CreateServerDependencies> as unknown as CreateServerDependencies);
+      } satisfies Partial<CreateServerDependencies> as CreateServerDependencies);
 
       const addUserPayload = {
         username: "bono",
@@ -283,15 +281,13 @@ describe("/threads endpoint", () => {
 
       const { accessToken } = loginUserResponsePayloadJson.data;
 
-      const addThreadPayload = {
-        title: "this is a title",
-        body: "this is a body",
-      };
-
       const addThreadResponse = await server.inject({
         method: "POST",
         url: "/threads",
-        payload: addThreadPayload,
+        payload: {
+          title: "this is a title",
+          body: "this is a body",
+        },
         headers: {
           authorization: `Bearer ${accessToken}`,
         },
@@ -350,7 +346,7 @@ describe("/threads endpoint", () => {
     it("should have a response with a 404 status code if the thread is not found", async () => {
       const server = await createServer({
         getThreadDetailUseCase,
-      } satisfies Partial<CreateServerDependencies> as unknown as CreateServerDependencies);
+      } satisfies Partial<CreateServerDependencies> as CreateServerDependencies);
 
       const getThreadDetailResponse = await server.inject({
         method: "GET",

@@ -47,7 +47,7 @@ describe("/comments endpoint", () => {
         loginUserUseCase,
         addThreadUseCase,
         addCommentUseCase,
-      } satisfies Partial<CreateServerDependencies> as unknown as CreateServerDependencies);
+      } satisfies Partial<CreateServerDependencies> as CreateServerDependencies);
 
       const addUserPayload = {
         username: "bono",
@@ -80,15 +80,13 @@ describe("/comments endpoint", () => {
 
       const { accessToken } = loginUserResponsePayloadJson.data;
 
-      const addThreadPayload = {
-        title: "this is a title",
-        body: "this is a body",
-      };
-
       const addThreadResponse = await server.inject({
         method: "POST",
         url: "/threads",
-        payload: addThreadPayload,
+        payload: {
+          title: "this is a title",
+          body: "this is a body",
+        },
         headers: {
           authorization: `Bearer ${accessToken}`,
         },
@@ -121,7 +119,7 @@ describe("/comments endpoint", () => {
 
       expect(addCommentResponse.statusCode).toEqual(201);
       expect(addCommentResponsePayloadJson.status).toEqual("success");
-      expect(addedComment.id).toBeDefined();
+      expect(typeof addedComment.id).toEqual("string");
       expect(addedComment.content).toEqual(addCommentPayload.content);
       expect(addedComment.owner).toEqual(addedUser.id);
     });
@@ -132,7 +130,7 @@ describe("/comments endpoint", () => {
         loginUserUseCase,
         addThreadUseCase,
         addCommentUseCase,
-      } satisfies Partial<CreateServerDependencies> as unknown as CreateServerDependencies);
+      } satisfies Partial<CreateServerDependencies> as CreateServerDependencies);
 
       const addUserPayload = {
         username: "bono",
@@ -161,15 +159,13 @@ describe("/comments endpoint", () => {
 
       const { accessToken } = loginUserResponsePayloadJson.data;
 
-      const addThreadPayload = {
-        title: "this is a title",
-        body: "this is a body",
-      };
-
       const addThreadResponse = await server.inject({
         method: "POST",
         url: "/threads",
-        payload: addThreadPayload,
+        payload: {
+          title: "this is a title",
+          body: "this is a body",
+        },
         headers: {
           authorization: `Bearer ${accessToken}`,
         },
@@ -206,7 +202,7 @@ describe("/comments endpoint", () => {
         loginUserUseCase,
         addThreadUseCase,
         addCommentUseCase,
-      } satisfies Partial<CreateServerDependencies> as unknown as CreateServerDependencies);
+      } satisfies Partial<CreateServerDependencies> as CreateServerDependencies);
 
       const addUserPayload = {
         username: "bono",
@@ -235,15 +231,13 @@ describe("/comments endpoint", () => {
 
       const { accessToken } = loginUserResponsePayloadJson.data;
 
-      const addThreadPayload = {
-        title: "this is a title",
-        body: "this is a body",
-      };
-
       const addThreadResponse = await server.inject({
         method: "POST",
         url: "/threads",
-        payload: addThreadPayload,
+        payload: {
+          title: "this is a title",
+          body: "this is a body",
+        },
         headers: {
           authorization: `Bearer ${accessToken}`,
         },
@@ -258,7 +252,7 @@ describe("/comments endpoint", () => {
       const addCommentResponse = await server.inject({
         method: "POST",
         url: `/threads/${addedThread.id}/comments`,
-        payload: Buffer.from("123"),
+        payload: "123",
         headers: {
           authorization: `Bearer ${loginUserResponsePayloadJson.data.accessToken}`,
         },
@@ -281,7 +275,7 @@ describe("/comments endpoint", () => {
         loginUserUseCase,
         addThreadUseCase,
         addCommentUseCase,
-      } satisfies Partial<CreateServerDependencies> as unknown as CreateServerDependencies);
+      } satisfies Partial<CreateServerDependencies> as CreateServerDependencies);
 
       const addUserPayload = {
         username: "bono",
@@ -310,15 +304,13 @@ describe("/comments endpoint", () => {
 
       const { accessToken } = loginUserResponsePayloadJson.data;
 
-      const addThreadPayload = {
-        title: "this is a title",
-        body: "this is a body",
-      };
-
       const addThreadResponse = await server.inject({
         method: "POST",
         url: "/threads",
-        payload: addThreadPayload,
+        payload: {
+          title: "this is a title",
+          body: "this is a body",
+        },
         headers: {
           authorization: `Bearer ${accessToken}`,
         },
@@ -330,14 +322,12 @@ describe("/comments endpoint", () => {
 
       const { addedThread } = addThreadResponsePayloadJson.data;
 
-      const addCommentPayload = {
-        content: "this is a content",
-      };
-
       const addCommentResponse = await server.inject({
         method: "POST",
         url: `/threads/${addedThread.id}/comments`,
-        payload: addCommentPayload,
+        payload: {
+          content: "this is a content",
+        },
       });
 
       const addCommentResponsePayloadJson = JSON.parse(
@@ -355,7 +345,7 @@ describe("/comments endpoint", () => {
         addUserUseCase,
         loginUserUseCase,
         addCommentUseCase,
-      } satisfies Partial<CreateServerDependencies> as unknown as CreateServerDependencies);
+      } satisfies Partial<CreateServerDependencies> as CreateServerDependencies);
 
       const addUserPayload = {
         username: "bono",
@@ -382,14 +372,12 @@ describe("/comments endpoint", () => {
         loginUserResponse.payload
       );
 
-      const addCommentPayload = {
-        content: "this is a content",
-      };
-
       const addCommentResponse = await server.inject({
         method: "POST",
         url: `/threads/thread-123/comments`,
-        payload: addCommentPayload,
+        payload: {
+          content: "this is a content",
+        },
         headers: {
           authorization: `Bearer ${loginUserResponsePayloadJson.data.accessToken}`,
         },
@@ -415,7 +403,7 @@ describe("/comments endpoint", () => {
         addThreadUseCase,
         addCommentUseCase,
         softDeleteCommentUseCase,
-      } satisfies Partial<CreateServerDependencies> as unknown as CreateServerDependencies);
+      } satisfies Partial<CreateServerDependencies> as CreateServerDependencies);
 
       const addUserPayload = {
         username: "bono",
@@ -444,18 +432,16 @@ describe("/comments endpoint", () => {
 
       const { accessToken } = loginUserResponsePayloadJson.data;
 
-      const addThreadPayload = {
-        title: "this is a title",
-        body: "this is a title",
-      };
-
       const addThreadResponse = await server.inject({
         method: "POST",
         url: "/threads",
         headers: {
           authorization: `Bearer ${accessToken}`,
         },
-        payload: addThreadPayload,
+        payload: {
+          title: "this is a title",
+          body: "this is a title",
+        },
       });
 
       const addThreadResponsePayloadJson = JSON.parse(
@@ -464,14 +450,12 @@ describe("/comments endpoint", () => {
 
       const { addedThread } = addThreadResponsePayloadJson.data;
 
-      const addCommentPayload = {
-        content: "this is a content",
-      };
-
       const addCommentResponse = await server.inject({
         method: "POST",
         url: `/threads/${addedThread.id}/comments`,
-        payload: addCommentPayload,
+        payload: {
+          content: "this is a content",
+        },
         headers: {
           authorization: `Bearer ${accessToken}`,
         },
@@ -501,7 +485,7 @@ describe("/comments endpoint", () => {
 
     it("should have a response with a 401 statusCode if the authorization header is missing", async () => {
       const server = await createServer(
-        {} satisfies Partial<CreateServerDependencies> as unknown as CreateServerDependencies
+        {} satisfies Partial<CreateServerDependencies> as CreateServerDependencies
       );
 
       const softDeleteResponse = await server.inject({
@@ -526,7 +510,7 @@ describe("/comments endpoint", () => {
         addThreadUseCase,
         addCommentUseCase,
         softDeleteCommentUseCase,
-      } satisfies Partial<CreateServerDependencies> as unknown as CreateServerDependencies);
+      } satisfies Partial<CreateServerDependencies> as CreateServerDependencies);
 
       const addUserPayloadA = {
         username: "bono",
@@ -582,15 +566,13 @@ describe("/comments endpoint", () => {
 
       const { accessToken: accessTokenB } = loginUserResponsePayloadJsonB.data;
 
-      const addThreadPayload = {
-        title: "this is a title",
-        body: "this is a body",
-      };
-
       const addThreadResponse = await server.inject({
         method: "POST",
         url: "/threads",
-        payload: addThreadPayload,
+        payload: {
+          title: "this is a title",
+          body: "this is a body",
+        },
         headers: {
           authorization: `Bearer ${accessTokenA}`,
         },
@@ -645,7 +627,7 @@ describe("/comments endpoint", () => {
         addThreadUseCase,
         addCommentUseCase,
         softDeleteCommentUseCase,
-      } satisfies Partial<CreateServerDependencies> as unknown as CreateServerDependencies);
+      } satisfies Partial<CreateServerDependencies> as CreateServerDependencies);
 
       const addUserPayload = {
         username: "bono",
@@ -674,18 +656,16 @@ describe("/comments endpoint", () => {
 
       const { accessToken } = loginUserResponsePayloadJson.data;
 
-      const addThreadPayload = {
-        title: "this is a title",
-        body: "this is a title",
-      };
-
       const addThreadResponse = await server.inject({
         method: "POST",
         url: "/threads",
         headers: {
           authorization: `Bearer ${accessToken}`,
         },
-        payload: addThreadPayload,
+        payload: {
+          title: "this is a title",
+          body: "this is a title",
+        },
       });
 
       const addThreadResponsePayloadJson = JSON.parse(
@@ -694,14 +674,12 @@ describe("/comments endpoint", () => {
 
       const { addedThread } = addThreadResponsePayloadJson.data;
 
-      const addCommentPayload = {
-        content: "this is a content",
-      };
-
       const addCommentResponse = await server.inject({
         method: "POST",
         url: `/threads/${addedThread.id}/comments`,
-        payload: addCommentPayload,
+        payload: {
+          content: "this is a content",
+        },
         headers: {
           authorization: `Bearer ${accessToken}`,
         },
