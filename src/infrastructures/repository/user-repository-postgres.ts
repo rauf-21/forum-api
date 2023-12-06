@@ -8,12 +8,14 @@ type DB = typeof postgresDb;
 
 type IdGenerator = () => string;
 
-export class UserRepositoryPostgres implements UserRepository {
+export class UserRepositoryPostgres extends UserRepository {
   readonly #db: DB;
 
   readonly #idGenerator: IdGenerator;
 
   constructor(db: typeof postgresDb, idGenerator: () => string) {
+    super();
+
     this.#db = db;
     this.#idGenerator = idGenerator;
   }

@@ -10,16 +10,16 @@ type DB = typeof postgresDb;
 
 type IdGenerator = () => string;
 
-export class CommentRepositoryPostgres implements CommentRepository {
+export class CommentRepositoryPostgres extends CommentRepository {
   readonly #db: DB;
 
   readonly #idGenerator: IdGenerator;
 
   constructor(db: DB, idGenerator: IdGenerator) {
+    super();
+
     this.#db = db;
     this.#idGenerator = idGenerator;
-
-    this.addComment = this.addComment.bind(this);
   }
 
   async addComment(newComment: NewComment) {

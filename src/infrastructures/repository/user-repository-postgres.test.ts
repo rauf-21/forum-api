@@ -33,6 +33,8 @@ describe("UserRepositoryPostgres", () => {
       await UsersTableTestHelper.addUser({
         id: "user-123",
         username: "dicoding",
+        password: "bono123",
+        fullname: "bono bono",
       });
 
       const userRepositoryPostgres = new UserRepositoryPostgres(db, nanoid);
@@ -99,6 +101,7 @@ describe("UserRepositoryPostgres", () => {
         id: "user-123",
         username: "dicoding",
         password: "secret_password",
+        fullname: "bono bono",
       });
 
       const user = await userRepositoryPostgres.getUserByUsername("dicoding");
@@ -122,6 +125,8 @@ describe("UserRepositoryPostgres", () => {
       const user = {
         id: "user-123",
         username: "bono",
+        password: "bono123",
+        fullname: "bono bono",
       };
 
       await UsersTableTestHelper.addUser(user);

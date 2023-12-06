@@ -7,10 +7,12 @@ import {
   REFRESH_TOKEN_SECRET,
 } from "../../commons/constants/infrastructures/token";
 
-export class TokenManagerJwt implements AuthenticationTokenManager {
+export class TokenManagerJwt extends AuthenticationTokenManager {
   readonly #jwtToken: HapiJwt.Token;
 
   constructor(jwtToken: HapiJwt.Token) {
+    super();
+
     this.#jwtToken = jwtToken;
   }
 

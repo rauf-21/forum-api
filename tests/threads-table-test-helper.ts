@@ -1,25 +1,13 @@
+import { Insertable } from "kysely";
+import { Threads } from "kysely-codegen";
+
 import { db } from "../src/infrastructures/database/postgres/db";
 
 export const ThreadsTableTestHelper = {
-  async addThread({
-    id,
-    title = "this is a title",
-    body = "this is a body",
-    date,
-    owner,
-  }: {
-    id: string;
-    title?: string;
-    body?: string;
-    date?: string;
-    owner: string;
-  }) {
-    await db
-      .insertInto("threads")
-      .values({ id, title, body, date, owner })
-      .execute();
+  async addThread(insertableThread: Insertable<Threads>) {
+    await db.insertInto("threads").values(insertableThread).execute();
   },
-  async findThreadById(id: string) {
+  async findThreadById(id: Threads["id"]) {
     const foundThread = await db
       .selectFrom("threads")
       .selectAll()

@@ -3,12 +3,14 @@ import * as Bcrypt from "bcrypt";
 import { PasswordHash } from "../../applications/security/password-hash";
 import { PASSWORD_HASH_ERROR } from "../../commons/constants/applications/security/password-hash-error";
 
-export class PasswordHashBcrypt implements PasswordHash {
+export class PasswordHashBcrypt extends PasswordHash {
   readonly #bcrypt: typeof Bcrypt;
 
   readonly #saltRound: number;
 
   constructor(bcrypt: typeof Bcrypt, saltRound = 10) {
+    super();
+
     this.#bcrypt = bcrypt;
     this.#saltRound = saltRound;
   }

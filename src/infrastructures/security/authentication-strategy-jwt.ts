@@ -6,16 +6,12 @@ import {
   ACCESS_TOKEN_SECRET,
 } from "../../commons/constants/infrastructures/token";
 
-export class AuthenticationStrategyJwt implements AuthenticationStrategy {
-  readonly name: string;
-
-  readonly scheme = "jwt";
-
-  readonly options: HapiJwt.Options;
-
+export class AuthenticationStrategyJwt extends AuthenticationStrategy<
+  "jwt",
+  HapiJwt.Options
+> {
   constructor(name: string) {
-    this.name = name;
-    this.options = {
+    super(name, "jwt", {
       keys: ACCESS_TOKEN_SECRET,
       verify: {
         aud: false,
@@ -29,6 +25,6 @@ export class AuthenticationStrategyJwt implements AuthenticationStrategy {
           id: artifacts.decoded.payload.id,
         },
       }),
-    };
+    });
   }
 }

@@ -145,19 +145,21 @@ describe("/users endpoint", () => {
         addUserUseCase,
       } satisfies Partial<CreateServerDependencies> as CreateServerDependencies);
 
+      const addUserPayload = {
+        username: "bono",
+        password: "bono123",
+        fullname: "bono bono",
+      };
+
       await UsersTableTestHelper.addUser({
         id: "user-123",
-        username: "dicoding",
+        ...addUserPayload,
       });
 
       const addUserResponse = await server.inject({
         method: "POST",
         url: "/users",
-        payload: {
-          username: "dicoding",
-          fullname: "Dicoding Indonesia",
-          password: "super_secret",
-        },
+        payload: addUserPayload,
       });
 
       const addUserResponsePayloadJson = JSON.parse(addUserResponse.payload);

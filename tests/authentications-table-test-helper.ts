@@ -1,12 +1,13 @@
 import { sql } from "kysely";
+import { Authentications } from "kysely-codegen";
 
 import { db } from "../src/infrastructures/database/postgres/db";
 
 export const AuthenticationsTableTestHelper = {
-  async addToken(token: string) {
+  async addToken(token: Authentications["token"]) {
     await db.insertInto("authentications").values({ token }).execute();
   },
-  async findToken(token: string) {
+  async findToken(token: Authentications["token"]) {
     const result = await db
       .selectFrom("authentications")
       .select("token")

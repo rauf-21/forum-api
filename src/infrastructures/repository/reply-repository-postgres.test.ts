@@ -38,11 +38,21 @@ describe("ReplyRepository postgres", () => {
 
       const owner = "user-123";
 
-      await UsersTableTestHelper.addUser({ id: owner, username: "bono" });
+      await UsersTableTestHelper.addUser({
+        id: owner,
+        username: "bono",
+        password: "bono123",
+        fullname: "bono bono",
+      });
 
       const threadId = "thread-123";
 
-      await ThreadsTableTestHelper.addThread({ id: threadId, owner });
+      await ThreadsTableTestHelper.addThread({
+        id: threadId,
+        owner,
+        title: "this is a title",
+        body: "this is a body",
+      });
 
       const commentId = "comment-123";
 
@@ -50,6 +60,7 @@ describe("ReplyRepository postgres", () => {
         id: commentId,
         owner,
         threadId,
+        content: "this is a comment",
       });
 
       const newReply = new NewReply({
@@ -73,11 +84,21 @@ describe("ReplyRepository postgres", () => {
 
       const owner = "user-123";
 
-      await UsersTableTestHelper.addUser({ id: owner, username: "bono" });
+      await UsersTableTestHelper.addUser({
+        id: owner,
+        username: "bono",
+        password: "bono123",
+        fullname: "bono bono",
+      });
 
       const threadId = "thread-123";
 
-      await ThreadsTableTestHelper.addThread({ id: threadId, owner });
+      await ThreadsTableTestHelper.addThread({
+        id: threadId,
+        owner,
+        title: "this is a title",
+        body: "this is a body",
+      });
 
       const commentId = "comment-123";
 
@@ -85,6 +106,7 @@ describe("ReplyRepository postgres", () => {
         id: commentId,
         owner,
         threadId,
+        content: "this is a comment",
       });
 
       const newReply = new NewReply({
@@ -111,11 +133,21 @@ describe("ReplyRepository postgres", () => {
 
       const owner = "user-123";
 
-      await UsersTableTestHelper.addUser({ id: owner, username: "bono" });
+      await UsersTableTestHelper.addUser({
+        id: owner,
+        username: "bono",
+        password: "bono123",
+        fullname: "bono bono",
+      });
 
       const threadId = "thread-123";
 
-      await ThreadsTableTestHelper.addThread({ id: threadId, owner });
+      await ThreadsTableTestHelper.addThread({
+        id: threadId,
+        owner,
+        title: "this is a title",
+        body: "this is a body",
+      });
 
       const commentId = "comment-123";
 
@@ -123,6 +155,7 @@ describe("ReplyRepository postgres", () => {
         id: commentId,
         owner,
         threadId,
+        content: "this is a comment",
       });
 
       const newReply = new NewReply({
@@ -151,11 +184,21 @@ describe("ReplyRepository postgres", () => {
 
       const owner = "user-123";
 
-      await UsersTableTestHelper.addUser({ id: owner, username: "bono" });
+      await UsersTableTestHelper.addUser({
+        id: owner,
+        username: "bono",
+        password: "bono123",
+        fullname: "bono bono",
+      });
 
       const threadId = "thread-123";
 
-      await ThreadsTableTestHelper.addThread({ id: threadId, owner });
+      await ThreadsTableTestHelper.addThread({
+        id: threadId,
+        owner,
+        title: "this is a title",
+        body: "this is a body",
+      });
 
       const commentId = "comment-123";
 
@@ -163,6 +206,7 @@ describe("ReplyRepository postgres", () => {
         id: commentId,
         owner,
         threadId,
+        content: "this is a comment",
       });
 
       const newReply = new NewReply({
@@ -190,11 +234,21 @@ describe("ReplyRepository postgres", () => {
 
       const owner = "user-123";
 
-      await UsersTableTestHelper.addUser({ id: owner, username: "bono" });
+      await UsersTableTestHelper.addUser({
+        id: owner,
+        username: "bono",
+        password: "bono123",
+        fullname: "bono bono",
+      });
 
       const threadId = "thread-123";
 
-      await ThreadsTableTestHelper.addThread({ id: threadId, owner });
+      await ThreadsTableTestHelper.addThread({
+        id: threadId,
+        owner,
+        title: "this is a title",
+        body: "this is a body",
+      });
 
       const commentId = "comment-123";
 
@@ -202,6 +256,7 @@ describe("ReplyRepository postgres", () => {
         id: commentId,
         owner,
         threadId,
+        content: "this is a comment",
       });
 
       const newReply = new NewReply({
@@ -240,11 +295,21 @@ describe("ReplyRepository postgres", () => {
 
       const owner = "user-123";
 
-      await UsersTableTestHelper.addUser({ id: owner, username: "bono" });
+      await UsersTableTestHelper.addUser({
+        id: owner,
+        username: "bono",
+        password: "bono123",
+        fullname: "bono bono",
+      });
 
       const threadId = "thread-123";
 
-      await ThreadsTableTestHelper.addThread({ id: threadId, owner });
+      await ThreadsTableTestHelper.addThread({
+        id: threadId,
+        owner,
+        title: "this is a title",
+        body: "this is a body",
+      });
 
       const commentId = "comment";
 
@@ -252,11 +317,17 @@ describe("ReplyRepository postgres", () => {
         id: commentId,
         owner,
         threadId,
+        content: "this is a comment",
       });
 
       const replyId = "comment-123";
 
-      await RepliesTableTestHelper.addReply({ id: replyId, owner, commentId });
+      await RepliesTableTestHelper.addReply({
+        id: replyId,
+        owner,
+        commentId,
+        content: "this is a reply",
+      });
 
       await replyRepository.softDeleteReplyById(replyId);
 
@@ -273,6 +344,8 @@ describe("ReplyRepository postgres", () => {
       const user = {
         id: "user-123",
         username: "bono",
+        password: "bono123",
+        fullname: "bono bono",
       };
 
       await UsersTableTestHelper.addUser(user);
@@ -280,6 +353,8 @@ describe("ReplyRepository postgres", () => {
       const thread = {
         id: "thread-123",
         owner: user.id,
+        title: "this is a title",
+        body: "this is a body",
       };
 
       await ThreadsTableTestHelper.addThread(thread);
@@ -288,6 +363,7 @@ describe("ReplyRepository postgres", () => {
         id: "comment-123",
         owner: user.id,
         threadId: thread.id,
+        content: "this is a comment",
       };
 
       await CommentsTableTestHelper.addComment(comment);
@@ -295,8 +371,8 @@ describe("ReplyRepository postgres", () => {
       const replyA = {
         id: "reply-123",
         owner: user.id,
-        threadId: thread.id,
         commentId: comment.id,
+        content: "this is a reply",
       };
 
       await RepliesTableTestHelper.addReply(replyA);
@@ -304,8 +380,8 @@ describe("ReplyRepository postgres", () => {
       const replyB = {
         id: "reply-456",
         owner: user.id,
-        threadId: thread.id,
         commentId: comment.id,
+        content: "this is a reply",
       };
 
       await RepliesTableTestHelper.addReply(replyB);
@@ -325,6 +401,8 @@ describe("ReplyRepository postgres", () => {
       const user = {
         id: "user-123",
         username: "bono",
+        password: "bono123",
+        fullname: "bono bono",
       };
 
       await UsersTableTestHelper.addUser(user);
@@ -332,6 +410,8 @@ describe("ReplyRepository postgres", () => {
       const thread = {
         id: "thread-123",
         owner: user.id,
+        title: "this is a title",
+        body: "this is a body",
       };
 
       await ThreadsTableTestHelper.addThread(thread);
@@ -340,6 +420,7 @@ describe("ReplyRepository postgres", () => {
         id: "comment-123",
         owner: user.id,
         threadId: thread.id,
+        content: "this is a comment",
       };
 
       await CommentsTableTestHelper.addComment(comment);
@@ -360,6 +441,8 @@ describe("ReplyRepository postgres", () => {
       const user = {
         id: "user-123",
         username: "bono",
+        password: "bono123",
+        fullname: "bono bono",
       };
 
       await UsersTableTestHelper.addUser(user);
@@ -367,6 +450,8 @@ describe("ReplyRepository postgres", () => {
       const thread = {
         id: "thread-123",
         owner: user.id,
+        title: "this is a title",
+        body: "this is a body",
       };
 
       await ThreadsTableTestHelper.addThread(thread);
@@ -375,6 +460,7 @@ describe("ReplyRepository postgres", () => {
         id: "comment-123",
         owner: user.id,
         threadId: thread.id,
+        content: "this is a comment",
       };
 
       await CommentsTableTestHelper.addComment(comment);
@@ -383,8 +469,8 @@ describe("ReplyRepository postgres", () => {
         id: "reply-123",
         date: "2021-08-08T08:07:01.522Z",
         owner: user.id,
-        threadId: thread.id,
         commentId: comment.id,
+        content: "this is a reply",
       };
 
       await RepliesTableTestHelper.addReply(replyA);
@@ -393,8 +479,8 @@ describe("ReplyRepository postgres", () => {
         id: "reply-456",
         date: "2021-08-08T07:59:48.766Z",
         owner: user.id,
-        threadId: thread.id,
         commentId: comment.id,
+        content: "this is a reply",
       };
 
       await RepliesTableTestHelper.addReply(replyB);

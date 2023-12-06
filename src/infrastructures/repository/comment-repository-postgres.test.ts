@@ -33,11 +33,21 @@ describe("CommentRepository postgres", () => {
 
       const owner = "user-123";
 
-      await UsersTableTestHelper.addUser({ id: owner, username: "bono" });
+      await UsersTableTestHelper.addUser({
+        id: owner,
+        username: "bono",
+        password: "bono123",
+        fullname: "bono bono",
+      });
 
       const threadId = "thread-123";
 
-      await ThreadsTableTestHelper.addThread({ id: threadId, owner });
+      await ThreadsTableTestHelper.addThread({
+        id: threadId,
+        owner,
+        title: "this is a title",
+        body: "this is a body",
+      });
 
       const newComment = new NewComment({
         content: "this is a content",
@@ -59,11 +69,21 @@ describe("CommentRepository postgres", () => {
 
       const owner = "user-123";
 
-      await UsersTableTestHelper.addUser({ id: owner, username: "bono" });
+      await UsersTableTestHelper.addUser({
+        id: owner,
+        username: "bono",
+        password: "bono123",
+        fullname: "bono bono",
+      });
 
       const threadId = "thread-123";
 
-      await ThreadsTableTestHelper.addThread({ id: threadId, owner });
+      await ThreadsTableTestHelper.addThread({
+        id: threadId,
+        owner,
+        title: "this is a title",
+        body: "this is a body",
+      });
 
       const newComment = new NewComment({
         content: "this is a content",
@@ -88,11 +108,21 @@ describe("CommentRepository postgres", () => {
 
       const owner = "user-123";
 
-      await UsersTableTestHelper.addUser({ id: owner, username: "bono" });
+      await UsersTableTestHelper.addUser({
+        id: owner,
+        username: "bono",
+        password: "bono123",
+        fullname: "bono bono",
+      });
 
       const threadId = "thread-123";
 
-      await ThreadsTableTestHelper.addThread({ id: threadId, owner });
+      await ThreadsTableTestHelper.addThread({
+        id: threadId,
+        owner,
+        title: "this is a title",
+        body: "this is a body",
+      });
 
       const newComment = new NewComment({
         content: "this is a content",
@@ -119,11 +149,21 @@ describe("CommentRepository postgres", () => {
 
       const owner = "user-123";
 
-      await UsersTableTestHelper.addUser({ id: owner, username: "bono" });
+      await UsersTableTestHelper.addUser({
+        id: owner,
+        username: "bono",
+        password: "bono123",
+        fullname: "bono bono",
+      });
 
       const threadId = "thread-123";
 
-      await ThreadsTableTestHelper.addThread({ id: threadId, owner });
+      await ThreadsTableTestHelper.addThread({
+        id: threadId,
+        owner,
+        title: "this is a title",
+        body: "this is a body",
+      });
 
       const newComment = new NewComment({
         content: "this is a content",
@@ -148,11 +188,21 @@ describe("CommentRepository postgres", () => {
 
       const owner = "user-123";
 
-      await UsersTableTestHelper.addUser({ id: owner, username: "bono" });
+      await UsersTableTestHelper.addUser({
+        id: owner,
+        username: "bono",
+        password: "bono123",
+        fullname: "bono bono",
+      });
 
       const threadId = "thread-123";
 
-      await ThreadsTableTestHelper.addThread({ id: threadId, owner });
+      await ThreadsTableTestHelper.addThread({
+        id: threadId,
+        owner,
+        title: "this is a title",
+        body: "this is a body",
+      });
 
       const newComment = new NewComment({
         content: "this is a content",
@@ -189,11 +239,21 @@ describe("CommentRepository postgres", () => {
 
       const owner = "user-123";
 
-      await UsersTableTestHelper.addUser({ id: owner, username: "bono" });
+      await UsersTableTestHelper.addUser({
+        id: owner,
+        username: "bono",
+        password: "bono123",
+        fullname: "bono bono",
+      });
 
       const threadId = "thread-123";
 
-      await ThreadsTableTestHelper.addThread({ id: threadId, owner });
+      await ThreadsTableTestHelper.addThread({
+        id: threadId,
+        owner,
+        title: "this is a title",
+        body: "this is a body",
+      });
 
       const commentId = "comment-123";
 
@@ -201,6 +261,7 @@ describe("CommentRepository postgres", () => {
         id: commentId,
         owner,
         threadId,
+        content: "this is a comment",
       });
 
       await commentRepository.softDeleteCommentById(commentId);
@@ -219,6 +280,8 @@ describe("CommentRepository postgres", () => {
       const user = {
         id: "user-123",
         username: "bono",
+        password: "bono123",
+        fullname: "bono bono",
       };
 
       await UsersTableTestHelper.addUser(user);
@@ -226,6 +289,8 @@ describe("CommentRepository postgres", () => {
       const thread = {
         id: "thread-123",
         owner: user.id,
+        title: "this is a title",
+        body: "this is a body",
       };
 
       await ThreadsTableTestHelper.addThread(thread);
@@ -234,6 +299,7 @@ describe("CommentRepository postgres", () => {
         id: "comment-123",
         owner: user.id,
         threadId: thread.id,
+        content: "this is a comment",
       };
 
       await CommentsTableTestHelper.addComment(commentA);
@@ -242,6 +308,7 @@ describe("CommentRepository postgres", () => {
         id: "comment-456",
         owner: user.id,
         threadId: thread.id,
+        content: "this is a comment",
       };
 
       await CommentsTableTestHelper.addComment(commentB);
@@ -265,6 +332,8 @@ describe("CommentRepository postgres", () => {
       const user = {
         id: "user-123",
         username: "bono",
+        password: "bono123",
+        fullname: "bono bono",
       };
 
       await UsersTableTestHelper.addUser(user);
@@ -272,6 +341,8 @@ describe("CommentRepository postgres", () => {
       const thread = {
         id: "thread-123",
         owner: user.id,
+        title: "this is a title",
+        body: "this is a body",
       };
 
       await ThreadsTableTestHelper.addThread(thread);
@@ -295,6 +366,8 @@ describe("CommentRepository postgres", () => {
       const user = {
         id: "user-123",
         username: "bono",
+        password: "bono123",
+        fullname: "bono bono",
       };
 
       await UsersTableTestHelper.addUser(user);
@@ -302,6 +375,8 @@ describe("CommentRepository postgres", () => {
       const thread = {
         id: "thread-123",
         owner: user.id,
+        title: "this is a title",
+        body: "this is a body",
       };
 
       await ThreadsTableTestHelper.addThread(thread);
@@ -311,6 +386,7 @@ describe("CommentRepository postgres", () => {
         date: "2021-08-08T08:07:01.522Z",
         owner: user.id,
         threadId: thread.id,
+        content: "this is a comment",
       };
 
       await CommentsTableTestHelper.addComment(commentA);
@@ -320,6 +396,7 @@ describe("CommentRepository postgres", () => {
         date: "2021-08-08T07:59:48.766Z",
         owner: user.id,
         threadId: thread.id,
+        content: "this is a comment",
       };
 
       await CommentsTableTestHelper.addComment(commentB);

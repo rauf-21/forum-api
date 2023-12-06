@@ -36,6 +36,8 @@ describe("ThreadRepository postgres", () => {
       await UsersTableTestHelper.addUser({
         id: owner,
         username: "bono",
+        password: "bono123",
+        fullname: "bono bono",
       });
 
       const payload = new NewThread({
@@ -58,7 +60,12 @@ describe("ThreadRepository postgres", () => {
 
       const owner = "user-123";
 
-      await UsersTableTestHelper.addUser({ id: owner, username: "bono" });
+      await UsersTableTestHelper.addUser({
+        id: owner,
+        username: "bono",
+        password: "bono123",
+        fullname: "bono bono",
+      });
 
       const newThread = new NewThread({
         title: "this is a title",
@@ -89,6 +96,8 @@ describe("ThreadRepository postgres", () => {
       const addUserPayload = {
         id: "user-123",
         username: "bono",
+        password: "bono123",
+        fullname: "bono bono",
       };
 
       await UsersTableTestHelper.addUser(addUserPayload);
@@ -96,6 +105,8 @@ describe("ThreadRepository postgres", () => {
       const newThread = {
         id: "thread-123",
         owner: addUserPayload.id,
+        title: "this is a title",
+        body: "this is a body",
       };
 
       await ThreadsTableTestHelper.addThread(newThread);

@@ -1,25 +1,13 @@
-import { sql } from "kysely";
+import { Insertable, sql } from "kysely";
+import { Users } from "kysely-codegen";
 
 import { db } from "../src/infrastructures/database/postgres/db";
 
 export const UsersTableTestHelper = {
-  async addUser({
-    id,
-    username,
-    password = "secret",
-    fullname = "Dicoding Indonesia",
-  }: {
-    id: string;
-    username: string;
-    password?: string;
-    fullname?: string;
-  }) {
-    await db
-      .insertInto("users")
-      .values({ id, username, password, fullname })
-      .execute();
+  async addUser(insertableUser: Insertable<Users>) {
+    await db.insertInto("users").values(insertableUser).execute();
   },
-  async findUserById(id: string) {
+  async findUserById(id: Users["id"]) {
     const foundUser = await db
       .selectFrom("users")
       .selectAll()

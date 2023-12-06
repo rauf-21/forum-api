@@ -32,15 +32,15 @@ describe("AuthenticationStrategyJwt", () => {
 
     expect(name).toEqual(AUTHENTICATION_STRATEGY.JWT);
     expect(scheme).toEqual("jwt");
-    expect(options).toBeDefined();
-    expect(options.keys).toEqual(ACCESS_TOKEN_SECRET);
-    expect(options.verify).toEqual({
+    expect(typeof options).toEqual("object");
+    expect(options?.keys).toEqual(ACCESS_TOKEN_SECRET);
+    expect(options?.verify).toEqual({
       aud: false,
       iss: false,
       sub: false,
       maxAgeSec: ACCESS_TOKEN_AGE,
     });
-    expect(options.validate).toBeDefined();
+    expect(options?.validate).toBeDefined();
   });
 
   it("should be able to decode authorization header", async () => {

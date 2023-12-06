@@ -10,12 +10,14 @@ type DB = typeof postgresDb;
 
 type IdGenerator = () => string;
 
-export class ReplyRepositoryPostgres implements ReplyRepository {
+export class ReplyRepositoryPostgres extends ReplyRepository {
   readonly #db: DB;
 
   readonly #idGenerator: IdGenerator;
 
   constructor(db: DB, idGenerator: IdGenerator) {
+    super();
+
     this.#db = db;
     this.#idGenerator = idGenerator;
   }

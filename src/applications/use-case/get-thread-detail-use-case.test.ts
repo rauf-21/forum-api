@@ -28,6 +28,7 @@ describe("GetThreadDetailUseCase", () => {
       id: "thread-123",
       title: "this is a title",
       body: "this is a body",
+      // The data type for date is Date, not a string.
       date: new Date("2021-08-08T07:19:09.775Z"),
       owner: "user-123",
     });

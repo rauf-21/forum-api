@@ -4,12 +4,12 @@ import { db as postgresDb } from "../database/postgres/db";
 
 type DB = typeof postgresDb;
 
-export class AuthenticationRepositoryPostgres
-  implements AuthenticationRepository
-{
+export class AuthenticationRepositoryPostgres extends AuthenticationRepository {
   readonly #db: DB;
 
   constructor(db: DB) {
+    super();
+
     this.#db = db;
   }
 

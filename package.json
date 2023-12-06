@@ -15,14 +15,16 @@
     "migrate-up:test": "cross-env NODE_ENV=test tsx scripts/migrate.ts latest",
     "migrate-down:test": "cross-env NODE_ENV=test tsx scripts/migrate.ts down-to 'NO_MIGRATIONS'",
     "generate-db-types": "cross-env NODE_ENV=development tsx scripts/db-codegen.ts --camel-case",
-    "lint": "eslint migrations scripts src tests"
+    "lint": "tsc --noEmit --skipLibCheck && eslint migrations scripts src tests"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
     "@types/jest": "^29.5.6",
     "@types/node": "^20.8.9",
+    "@types/pg": "^8.10.9",
     "@typescript-eslint/eslint-plugin": "^5",
     "@typescript-eslint/parser": "^5",
     "cross-env": "^7.0.3",

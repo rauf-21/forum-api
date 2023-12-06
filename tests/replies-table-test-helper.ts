@@ -1,34 +1,13 @@
+import { Insertable } from "kysely";
+import { Replies } from "kysely-codegen";
+
 import { db } from "../src/infrastructures/database/postgres/db";
 
 export const RepliesTableTestHelper = {
-  async addReply({
-    id,
-    content = "this is a content",
-    date,
-    isDeleted,
-    owner,
-    commentId,
-  }: {
-    id: string;
-    content?: string;
-    date?: string;
-    isDeleted?: boolean;
-    owner: string;
-    commentId: string;
-  }) {
-    await db
-      .insertInto("replies")
-      .values({
-        id,
-        content,
-        date,
-        isDeleted,
-        owner,
-        commentId,
-      })
-      .execute();
+  async addReply(insertableReply: Insertable<Replies>) {
+    await db.insertInto("replies").values(insertableReply).execute();
   },
-  async findReplyById(id: string) {
+  async findReplyById(id: Replies["id"]) {
     const foundReply = await db
       .selectFrom("replies")
       .selectAll()
