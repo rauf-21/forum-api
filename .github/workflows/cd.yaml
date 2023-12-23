@@ -1,0 +1,62 @@
+name: Continuous Deployment
+
+on:
+  push:
+    branches: main, reverse-proxy
+
+jobs:
+  deploy-main:
+    if: ${{ github.ref_name }} == 'main'
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node_version: ["14.17.0"]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Node.js ${{ matrix.node_version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node_version }}
+      - name: Install PNPM
+        uses: pnpm/action-setup@v2
+        with:
+          version: 7
+          run_install: false
+      - name: Get PNPM Store Directory
+        run: |
+          echo "STORE_PATH=(pnpm store path --silent)" >> $GITHUB_ENV
+      - name: Setup PNPM Cache
+        uses: actions/cache@v3
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+      - name: Install Vercel CLI
+        run: |
+          pnpm add -g vercel@31
+      - name: Pull Vercel Environment Information
+        run: |
+          vercel pull --yes --environment=production --token=${{ env.VERCEL_TOKEN }}
+      - name: Build Project Artifacts
+        run: |
+          vercel build --prod --token=${{ env.VERCEL_TOKEN }}
+      - name: Deploy Project Artifacts to Vercel
+        run: |
+          vercel deploy --prebuilt --prod --token=${{ env.VERCEL_TOKEN }}
+    env:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
+  deploy-reverse-proxy:
+    if: ${{ github.ref_name }} == 'reverse-proxy'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Deploy to Scalingo
+        uses: kolok/deploy-to-scalingo@v1
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+          app-name: ${{ vars.SCALINGO_APP_NAME }}
+          known-host: ${{ vars.SCALINGO_KNOWN_HOST }}
