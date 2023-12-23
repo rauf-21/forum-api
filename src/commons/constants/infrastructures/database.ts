@@ -14,3 +14,7 @@ export const DATABASE_PASSWORD = process.env.DATABASE_PASSWORD as string;
 export const DATABASE_NAME = process.env.DATABASE_NAME as string;
 
 export const DATABASE_URL = process.env.DATABASE_URL as string;
+
+export const DATABASE_SSL_MODE = process.env.DATABASE_SSL_MODE as
+  | string
+  | undefined;
