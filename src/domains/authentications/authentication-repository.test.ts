@@ -16,6 +16,5 @@ describe("AuthenticationRepository", () => {
     await expect(authenticationRepository.deleteToken("")).rejects.toThrow(
       AUTHENTICATION_REPOSITORY_ERROR.METHOD_NOT_IMPLEMENTED
     );
-    expect(true).toEqual(false);
   });
 });
