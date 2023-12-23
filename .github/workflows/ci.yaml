@@ -37,6 +37,7 @@ jobs:
         run: |
           pnpm install
           pnpm migrate-up:test
+          pnpm generate-db-types
           pnpm test
         env:
           CI: true
