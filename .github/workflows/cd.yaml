@@ -6,9 +6,14 @@ on:
       - main
       - reverse-proxy
 
+env:
+  VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
 jobs:
-  deploy-main:
-    if: ${{ github.ref_name }} == 'main'
+  deploy:
+    if: ${{ github.ref_name == 'main' }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -46,13 +51,9 @@ jobs:
       - name: Deploy Project Artifacts to Vercel
         run: |
           vercel deploy --prebuilt --prod --token=${{ env.VERCEL_TOKEN }}
-    env:
-      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
 
   deploy-reverse-proxy:
-    if: ${{ github.ref_name }} == 'reverse-proxy'
+    if: ${{ github.ref_name == 'reverse-proxy' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
