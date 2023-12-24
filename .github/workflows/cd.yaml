@@ -2,7 +2,9 @@ name: Continuous Deployment
 
 on:
   push:
-    branches: main, reverse-proxy
+    branches:
+      - main
+      - reverse-proxy
 
 jobs:
   deploy-main:
