@@ -15,6 +15,7 @@ describe("ThreadDetail entities", () => {
           username: "miko",
           date: "2021-08-08T07:59:18.982Z",
           content: "this is a comment",
+          likeCount: 0,
           replies: [
             {
               id: "reply-123",
@@ -59,6 +60,7 @@ describe("ThreadDetail entities", () => {
           username: "miko",
           date: "2021-08-08T07:59:18.982Z",
           content: "this is a comment",
+          likeCount: 0,
           replies: [{}],
         },
       ],
@@ -101,6 +103,7 @@ describe("ThreadDetail entities", () => {
           username: "miko",
           date: "2021-08-08T07:59:18.982Z",
           content: "this is a comment",
+          likeCount: 0,
           replies: [
             {
               id: 123,

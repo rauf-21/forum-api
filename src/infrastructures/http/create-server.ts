@@ -11,6 +11,7 @@ import { LogoutUserUseCase } from "../../applications/use-case/logout-user-use-c
 import { RefreshAuthenticationUseCase } from "../../applications/use-case/refresh-authentication-use-case";
 import { SoftDeleteCommentUseCase } from "../../applications/use-case/soft-delete-comment-use-case";
 import { SoftDeleteReplyUseCase } from "../../applications/use-case/soft-delete-reply-use-case";
+import { ToggleCommentLikeUseCase } from "../../applications/use-case/toggle-comment-like-use-case";
 import { AUTHENTICATION_STRATEGY } from "../../commons/constants/applications/security/authentication-strategy";
 import { HOST, PORT } from "../../commons/constants/infrastructures/http";
 import { ClientError } from "../../commons/exceptions/client-error";
@@ -33,6 +34,7 @@ export interface CreateServerDependencies {
   addReplyUseCase: AddReplyUseCase;
   softDeleteReplyUseCase: SoftDeleteReplyUseCase;
   getThreadDetailUseCase: GetThreadDetailUseCase;
+  toggleCommentLikeUseCase: ToggleCommentLikeUseCase;
 }
 
 export async function createServer(dependencies: CreateServerDependencies) {
@@ -47,6 +49,7 @@ export async function createServer(dependencies: CreateServerDependencies) {
     addReplyUseCase,
     softDeleteReplyUseCase,
     getThreadDetailUseCase,
+    toggleCommentLikeUseCase,
   } = dependencies;
 
   const server = Hapi.server({
@@ -85,7 +88,11 @@ export async function createServer(dependencies: CreateServerDependencies) {
     },
     {
       plugin: commentsPlugin,
-      options: { addCommentUseCase, softDeleteCommentUseCase },
+      options: {
+        addCommentUseCase,
+        softDeleteCommentUseCase,
+        toggleCommentLikeUseCase,
+      },
     },
     {
       plugin: repliesPlugin,
