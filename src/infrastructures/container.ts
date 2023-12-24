@@ -16,16 +16,13 @@ import { LogoutUserUseCase } from "../applications/use-case/logout-user-use-case
 import { RefreshAuthenticationUseCase } from "../applications/use-case/refresh-authentication-use-case";
 import { SoftDeleteCommentUseCase } from "../applications/use-case/soft-delete-comment-use-case";
 import { SoftDeleteReplyUseCase } from "../applications/use-case/soft-delete-reply-use-case";
-import { ToggleCommentLikeUseCase } from "../applications/use-case/toggle-comment-like-use-case";
 import { AuthenticationRepository } from "../domains/authentications/authentication-repository";
-import { CommentLikeRepository } from "../domains/comment-likes/comment-like-repository";
 import { CommentRepository } from "../domains/comments/comment-repository";
 import { ReplyRepository } from "../domains/replies/reply-repository";
 import { ThreadRepository } from "../domains/threads/thread-repository";
 import { UserRepository } from "../domains/users/user-repository";
 import { db } from "./database/postgres/db";
 import { AuthenticationRepositoryPostgres } from "./repository/authentication-repository-postgres";
-import { CommentLikeRepositoryPostgres } from "./repository/comment-like-repository-postgres";
 import { CommentRepositoryPostgres } from "./repository/comment-repository-postgres";
 import { ReplyRepositoryPostgres } from "./repository/reply-repository-postgres";
 import { ThreadRepositoryPostgres } from "./repository/thread-repository-postgres";
@@ -46,7 +43,6 @@ interface Cradle {
   threadRepository: ThreadRepository;
   commentRepository: CommentRepository;
   replyRepository: ReplyRepository;
-  commentLikeRepository: CommentLikeRepository;
   // Use Case
   addUserUseCase: AddUserUseCase;
   loginUserUseCase: LoginUserUseCase;
@@ -59,7 +55,6 @@ interface Cradle {
   addReplyUseCase: AddReplyUseCase;
   softDeleteReplyUseCase: SoftDeleteReplyUseCase;
   getThreadDetailUseCase: GetThreadDetailUseCase;
-  toggleCommentLikeUseCase: ToggleCommentLikeUseCase;
 }
 
 export const container = Awilix.createContainer<Cradle>();
@@ -79,9 +74,6 @@ container.register({
   threadRepository: Awilix.asClass(ThreadRepositoryPostgres).classic(),
   commentRepository: Awilix.asClass(CommentRepositoryPostgres).classic(),
   replyRepository: Awilix.asClass(ReplyRepositoryPostgres).classic(),
-  commentLikeRepository: Awilix.asClass(
-    CommentLikeRepositoryPostgres
-  ).classic(),
   // Use Case
   addUserUseCase: Awilix.asClass(AddUserUseCase).proxy(),
   loginUserUseCase: Awilix.asClass(LoginUserUseCase).proxy(),
@@ -98,5 +90,4 @@ container.register({
   addReplyUseCase: Awilix.asClass(AddReplyUseCase).proxy(),
   softDeleteReplyUseCase: Awilix.asClass(SoftDeleteReplyUseCase).proxy(),
   getThreadDetailUseCase: Awilix.asClass(GetThreadDetailUseCase).proxy(),
-  toggleCommentLikeUseCase: Awilix.asClass(ToggleCommentLikeUseCase).proxy(),
 });

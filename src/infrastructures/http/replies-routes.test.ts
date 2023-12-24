@@ -800,10 +800,10 @@ describe("/replies endpoint", () => {
       expect(softDeleteReplyResponsePayloadJsonB.status).toEqual("fail");
       expect(softDeleteReplyResponsePayloadJsonC.status).toEqual("fail");
       expect(softDeleteReplyResponsePayloadJsonA.message).toEqual(
-        THREAD_REPOSITORY_ERROR_MESSAGE.THREAD_NOT_FOUND
+        REPLY_REPOSITORY_ERROR_MESSAGE.REPLY_NOT_FOUND
       );
       expect(softDeleteReplyResponsePayloadJsonB.message).toEqual(
-        COMMENT_REPOSITORY_ERROR_MESSAGE.COMMENT_NOT_FOUND
+        REPLY_REPOSITORY_ERROR_MESSAGE.REPLY_NOT_FOUND
       );
       expect(softDeleteReplyResponsePayloadJsonC.message).toEqual(
         REPLY_REPOSITORY_ERROR_MESSAGE.REPLY_NOT_FOUND

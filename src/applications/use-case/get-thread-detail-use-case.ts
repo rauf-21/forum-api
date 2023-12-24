@@ -2,7 +2,6 @@ import { z } from "zod";
 
 import { GET_THREAD_DETAIL_USE_CASE_ERROR } from "../../commons/constants/applications/use-case/get-thread-detail-use-case-error";
 import { GET_THREAD_DETAIL_USE_CASE_TEXT } from "../../commons/constants/applications/use-case/get-thread-detail-use-case-text";
-import { CommentLikeRepository } from "../../domains/comment-likes/comment-like-repository";
 import { CommentRepository } from "../../domains/comments/comment-repository";
 import { ReplyRepository } from "../../domains/replies/reply-repository";
 import { ThreadDetail } from "../../domains/threads/entities/thread-detail";
@@ -21,7 +20,6 @@ export interface GetThreadDetailUseCaseDependencies {
   threadRepository: ThreadRepository;
   commentRepository: CommentRepository;
   replyRepository: ReplyRepository;
-  commentLikeRepository: CommentLikeRepository;
 }
 
 export class GetThreadDetailUseCase {
@@ -33,22 +31,18 @@ export class GetThreadDetailUseCase {
 
   readonly #replyRepository;
 
-  readonly #commentLikeRepository;
-
   constructor(dependencies: GetThreadDetailUseCaseDependencies) {
     const {
       userRepository,
       threadRepository,
       commentRepository,
       replyRepository,
-      commentLikeRepository,
     } = dependencies;
 
     this.#userRepository = userRepository;
     this.#threadRepository = threadRepository;
     this.#commentRepository = commentRepository;
     this.#replyRepository = replyRepository;
-    this.#commentLikeRepository = commentLikeRepository;
   }
 
   async execute(payload: unknown) {
@@ -86,11 +80,6 @@ export class GetThreadDetailUseCase {
           ? GET_THREAD_DETAIL_USE_CASE_TEXT.SOFT_DELETED_COMMENT
           : comment.content;
 
-        const likeCount =
-          await this.#commentLikeRepository.getCommentLikeCountByCommentId(
-            comment.id
-          );
-
         const formattedReplies = await Promise.all(
           replies.map(async (reply) => {
             const replierUsername = await this.#userRepository.getUsernameById(
@@ -115,7 +104,6 @@ export class GetThreadDetailUseCase {
           date: comment.date,
           username: commenterUsername,
           content: commentContent,
-          likeCount,
           replies: formattedReplies,
         };
       })

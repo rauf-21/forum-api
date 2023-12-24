@@ -22,12 +22,4 @@ export const commentsRoutes = (
       auth: AUTHENTICATION_STRATEGY.JWT,
     },
   },
-  {
-    method: "PUT",
-    path: "/threads/{threadId}/comments/{commentId}/likes",
-    handler: handler.toggleCommentLikeHandler,
-    options: {
-      auth: AUTHENTICATION_STRATEGY.JWT,
-    },
-  },
 ];

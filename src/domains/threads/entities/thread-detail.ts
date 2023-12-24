@@ -52,10 +52,6 @@ const ThreadCommentPayloadSchema = z.object({
     required_error: THREAD_DETAIL_ERROR.COMMENT.MISSING_PROPERTY,
     invalid_type_error: THREAD_DETAIL_ERROR.COMMENT.INVALID_DATA_TYPE,
   }),
-  likeCount: z.number({
-    required_error: THREAD_DETAIL_ERROR.COMMENT.MISSING_PROPERTY,
-    invalid_type_error: THREAD_DETAIL_ERROR.COMMENT.INVALID_DATA_TYPE,
-  }),
   replies: z.array(CommentReplyPayloadSchema),
 });
 

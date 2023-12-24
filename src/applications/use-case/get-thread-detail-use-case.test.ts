@@ -2,7 +2,6 @@ import * as jme from "jest-mock-extended";
 
 import { GET_THREAD_DETAIL_USE_CASE_ERROR } from "../../commons/constants/applications/use-case/get-thread-detail-use-case-error";
 import { GET_THREAD_DETAIL_USE_CASE_TEXT } from "../../commons/constants/applications/use-case/get-thread-detail-use-case-text";
-import { CommentLikeRepository } from "../../domains/comment-likes/comment-like-repository";
 import { CommentRepository } from "../../domains/comments/comment-repository";
 import { ReplyRepository } from "../../domains/replies/reply-repository";
 import { ThreadDetail } from "../../domains/threads/entities/thread-detail";
@@ -47,12 +46,6 @@ describe("GetThreadDetailUseCase", () => {
       },
     ]);
 
-    const mockCommentLikeRepository = jme.mock<CommentLikeRepository>();
-
-    mockCommentLikeRepository.getCommentLikeCountByCommentId.mockResolvedValue(
-      0
-    );
-
     const mockReplyRepository = jme.mock<ReplyRepository>();
 
     mockReplyRepository.getRepliesByCommentId.mockResolvedValue([
@@ -71,7 +64,6 @@ describe("GetThreadDetailUseCase", () => {
       threadRepository: mockThreadRepository,
       commentRepository: mockCommentRepository,
       replyRepository: mockReplyRepository,
-      commentLikeRepository: mockCommentLikeRepository,
     });
 
     const threadDetail = await getThreadDetailUseCase.execute(useCasePayload);
@@ -89,7 +81,6 @@ describe("GetThreadDetailUseCase", () => {
             username: "bono",
             date: new Date("2021-08-08T07:59:18.982Z"),
             content: "this is a comment",
-            likeCount: 0,
             replies: [
               {
                 id: "reply-123",
@@ -109,9 +100,6 @@ describe("GetThreadDetailUseCase", () => {
     expect(mockCommentRepository.getCommentsByThreadId).toHaveBeenCalledWith(
       "thread-123"
     );
-    expect(
-      mockCommentLikeRepository.getCommentLikeCountByCommentId
-    ).toHaveBeenCalledWith("comment-123");
     expect(mockReplyRepository.getRepliesByCommentId).toHaveBeenCalledWith(
       "comment-123"
     );
@@ -173,12 +161,6 @@ describe("GetThreadDetailUseCase", () => {
       },
     ]);
 
-    const mockCommentLikeRepository = jme.mock<CommentLikeRepository>();
-
-    mockCommentLikeRepository.getCommentLikeCountByCommentId.mockResolvedValue(
-      0
-    );
-
     const mockReplyRepository = jme.mock<ReplyRepository>();
 
     mockReplyRepository.getRepliesByCommentId.mockResolvedValue([
@@ -197,7 +179,6 @@ describe("GetThreadDetailUseCase", () => {
       threadRepository: mockThreadRepository,
       commentRepository: mockCommentRepository,
       replyRepository: mockReplyRepository,
-      commentLikeRepository: mockCommentLikeRepository,
     });
 
     const threadDetail = await getThreadDetailUseCase.execute(useCasePayload);
@@ -215,7 +196,6 @@ describe("GetThreadDetailUseCase", () => {
             username: "bono",
             date: new Date("2021-08-08T07:59:18.982Z"),
             content: GET_THREAD_DETAIL_USE_CASE_TEXT.SOFT_DELETED_COMMENT,
-            likeCount: 0,
             replies: [
               {
                 id: "reply-123",
@@ -235,9 +215,6 @@ describe("GetThreadDetailUseCase", () => {
     expect(mockCommentRepository.getCommentsByThreadId).toHaveBeenCalledWith(
       "thread-123"
     );
-    expect(
-      mockCommentLikeRepository.getCommentLikeCountByCommentId
-    ).toHaveBeenCalledWith("comment-123");
     expect(mockReplyRepository.getRepliesByCommentId).toHaveBeenCalledWith(
       "comment-123"
     );

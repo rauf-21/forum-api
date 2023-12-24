@@ -27,10 +27,6 @@ async function start() {
 
   const getThreadDetailUseCase = container.resolve("getThreadDetailUseCase");
 
-  const toggleCommentLikeUseCase = container.resolve(
-    "toggleCommentLikeUseCase"
-  );
-
   const server = await createServer({
     addUserUseCase,
     loginUserUseCase,
@@ -42,7 +38,6 @@ async function start() {
     addReplyUseCase,
     softDeleteReplyUseCase,
     getThreadDetailUseCase,
-    toggleCommentLikeUseCase,
   });
 
   await server.start();

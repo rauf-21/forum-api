@@ -1,5 +1,4 @@
 import { AuthenticationsTableTestHelper } from "../../../tests/authentications-table-test-helper";
-import { CommentLikesTableTestHelper } from "../../../tests/comment-likes-table-test-helper";
 import { CommentsTableTestHelper } from "../../../tests/comments-table-test-helper";
 import { ThreadsTableTestHelper } from "../../../tests/threads-table-test-helper";
 import { UsersTableTestHelper } from "../../../tests/users-table-test-helper";
@@ -23,18 +22,11 @@ describe("/comments endpoint", () => {
     "softDeleteCommentUseCase"
   );
 
-  const toggleCommentLikeUseCase = container.resolve(
-    "toggleCommentLikeUseCase"
-  );
-
-  const getThreadDetailUseCase = container.resolve("getThreadDetailUseCase");
-
   beforeAll(async () => {
     await UsersTableTestHelper.cleanTable();
     await ThreadsTableTestHelper.cleanTable();
     await AuthenticationsTableTestHelper.cleanTable();
     await CommentsTableTestHelper.cleanTable();
-    await CommentLikesTableTestHelper.cleanTable();
   });
 
   afterAll(async () => {
@@ -46,7 +38,6 @@ describe("/comments endpoint", () => {
     await ThreadsTableTestHelper.cleanTable();
     await AuthenticationsTableTestHelper.cleanTable();
     await CommentsTableTestHelper.cleanTable();
-    await CommentLikesTableTestHelper.cleanTable();
   });
 
   describe("when POST /comments", () => {
@@ -634,100 +625,8 @@ describe("/comments endpoint", () => {
         addUserUseCase,
         loginUserUseCase,
         addThreadUseCase,
-        softDeleteCommentUseCase,
-      } satisfies Partial<CreateServerDependencies> as CreateServerDependencies);
-
-      const addUserPayload = {
-        username: "bono",
-        password: "bono123",
-        fullname: "bono bono",
-      };
-
-      await server.inject({
-        method: "POST",
-        url: "/users",
-        payload: addUserPayload,
-      });
-
-      const loginUserResponse = await server.inject({
-        method: "POST",
-        url: "/authentications",
-        payload: {
-          username: addUserPayload.username,
-          password: addUserPayload.password,
-        },
-      });
-
-      const loginUserResponsePayloadJson = JSON.parse(
-        loginUserResponse.payload
-      );
-
-      const { accessToken } = loginUserResponsePayloadJson.data;
-
-      const addThreadResponse = await server.inject({
-        method: "POST",
-        url: "/threads",
-        headers: {
-          authorization: `Bearer ${accessToken}`,
-        },
-        payload: {
-          title: "this is a title",
-          body: "this is a body",
-        },
-      });
-
-      const addThreadResponsePayloadJson = JSON.parse(
-        addThreadResponse.payload
-      );
-
-      const { addedThread } = addThreadResponsePayloadJson.data;
-
-      const softDeleteCommentResponseA = await server.inject({
-        method: "DELETE",
-        url: `/threads/thread-123/comments/comment-123`,
-        headers: {
-          authorization: `Bearer ${accessToken}`,
-        },
-      });
-
-      const softDeleteCommentResponsePayloadJsonA = JSON.parse(
-        softDeleteCommentResponseA.payload
-      );
-
-      const softDeleteCommentResponseB = await server.inject({
-        method: "DELETE",
-        url: `/threads/${addedThread.id}/comments/comment-123`,
-        headers: {
-          authorization: `Bearer ${accessToken}`,
-        },
-      });
-
-      const softDeleteCommentResponsePayloadJsonB = JSON.parse(
-        softDeleteCommentResponseB.payload
-      );
-
-      expect(softDeleteCommentResponseA.statusCode).toEqual(404);
-      expect(softDeleteCommentResponseB.statusCode).toEqual(404);
-      expect(softDeleteCommentResponsePayloadJsonA.status).toEqual("fail");
-      expect(softDeleteCommentResponsePayloadJsonB.status).toEqual("fail");
-      expect(softDeleteCommentResponsePayloadJsonA.message).toEqual(
-        THREAD_REPOSITORY_ERROR_MESSAGE.THREAD_NOT_FOUND
-      );
-      expect(softDeleteCommentResponsePayloadJsonB.message).toEqual(
-        COMMENT_REPOSITORY_ERROR_MESSAGE.COMMENT_NOT_FOUND
-      );
-    });
-  });
-
-  describe("when PUT /likes", () => {
-    it("should have a response with a 200 statusCode and toggle comment like", async () => {
-      const server = await createServer({
-        addUserUseCase,
-        loginUserUseCase,
-        addThreadUseCase,
         addCommentUseCase,
-        toggleCommentLikeUseCase,
-        getThreadDetailUseCase,
+        softDeleteCommentUseCase,
       } satisfies Partial<CreateServerDependencies> as CreateServerDependencies);
 
       const addUserPayload = {
@@ -792,136 +691,38 @@ describe("/comments endpoint", () => {
 
       const { addedComment } = addedCommentResponsePayloadJson.data;
 
-      await server.inject({
-        method: "PUT",
-        url: `/threads/${addedThread.id}/comments/${addedComment.id}/likes`,
+      const softDeleteCommentResponseA = await server.inject({
+        method: "DELETE",
+        url: `/threads/thread-123/comments/${addedComment.id}`,
         headers: {
           authorization: `Bearer ${accessToken}`,
         },
       });
 
-      const getThreadDetailResponseA = await server.inject({
-        method: "GET",
-        url: `/threads/${addedThread.id}`,
-      });
-
-      const getThreadDetailResponsePayloadJsonA = JSON.parse(
-        getThreadDetailResponseA.payload
+      const softDeleteCommentResponsePayloadJsonA = JSON.parse(
+        softDeleteCommentResponseA.payload
       );
 
-      const { thread: threadDetailA } =
-        getThreadDetailResponsePayloadJsonA.data;
-
-      expect(threadDetailA.comments[0].likeCount).toEqual(1);
-
-      await server.inject({
-        method: "PUT",
-        url: `/threads/${addedThread.id}/comments/${addedComment.id}/likes`,
+      const softDeleteCommentResponseB = await server.inject({
+        method: "DELETE",
+        url: `/threads/${addedThread.id}/comments/comment-123`,
         headers: {
           authorization: `Bearer ${accessToken}`,
         },
       });
 
-      const getThreadDetailResponseB = await server.inject({
-        method: "GET",
-        url: `/threads/${addedThread.id}`,
-      });
-
-      const getThreadDetailResponsePayloadJsonB = JSON.parse(
-        getThreadDetailResponseB.payload
+      const softDeleteCommentResponsePayloadJsonB = JSON.parse(
+        softDeleteCommentResponseB.payload
       );
 
-      const { thread: threadDetailB } =
-        getThreadDetailResponsePayloadJsonB.data;
-
-      expect(threadDetailB.comments[0].likeCount).toEqual(0);
-    });
-
-    it("should have a response with a 404 statusCode if the thread or comment is not found", async () => {
-      const server = await createServer({
-        addUserUseCase,
-        loginUserUseCase,
-        addThreadUseCase,
-        toggleCommentLikeUseCase,
-      } satisfies Partial<CreateServerDependencies> as CreateServerDependencies);
-
-      const addUserPayload = {
-        username: "bono",
-        password: "bono123",
-        fullname: "bono bono",
-      };
-
-      await server.inject({
-        method: "POST",
-        url: "/users",
-        payload: addUserPayload,
-      });
-
-      const loginUserResponse = await server.inject({
-        method: "POST",
-        url: "/authentications",
-        payload: {
-          username: addUserPayload.username,
-          password: addUserPayload.password,
-        },
-      });
-
-      const loginUserResponsePayloadJson = JSON.parse(
-        loginUserResponse.payload
+      expect(softDeleteCommentResponseA.statusCode).toEqual(404);
+      expect(softDeleteCommentResponseB.statusCode).toEqual(404);
+      expect(softDeleteCommentResponsePayloadJsonA.status).toEqual("fail");
+      expect(softDeleteCommentResponsePayloadJsonB.status).toEqual("fail");
+      expect(softDeleteCommentResponsePayloadJsonA.message).toEqual(
+        COMMENT_REPOSITORY_ERROR_MESSAGE.COMMENT_NOT_FOUND
       );
-
-      const { accessToken } = loginUserResponsePayloadJson.data;
-
-      const addThreadResponse = await server.inject({
-        method: "POST",
-        url: "/threads",
-        headers: {
-          authorization: `Bearer ${accessToken}`,
-        },
-        payload: {
-          title: "this is a title",
-          body: "this is a content",
-        },
-      });
-
-      const addThreadResponsePayloadJson = JSON.parse(
-        addThreadResponse.payload
-      );
-
-      const { addedThread } = addThreadResponsePayloadJson.data;
-
-      const toggleCommentLikeResponseA = await server.inject({
-        method: "PUT",
-        url: "/threads/thread-123/comments/comment-123/likes",
-        headers: {
-          authorization: `Bearer ${accessToken}`,
-        },
-      });
-
-      const toggleCommentLikeResponsePayloadJsonA = JSON.parse(
-        toggleCommentLikeResponseA.payload
-      );
-
-      const toggleCommentLikeResponseB = await server.inject({
-        method: "PUT",
-        url: `/threads/${addedThread.id}/comments/comment-123/likes`,
-        headers: {
-          authorization: `Bearer ${accessToken}`,
-        },
-      });
-
-      const toggleCommentLikeResponsePayloadJsonB = JSON.parse(
-        toggleCommentLikeResponseB.payload
-      );
-
-      expect(toggleCommentLikeResponseA.statusCode).toEqual(404);
-      expect(toggleCommentLikeResponseB.statusCode).toEqual(404);
-      expect(toggleCommentLikeResponsePayloadJsonA.status).toEqual("fail");
-      expect(toggleCommentLikeResponsePayloadJsonB.status).toEqual("fail");
-      expect(toggleCommentLikeResponsePayloadJsonA.message).toEqual(
-        THREAD_REPOSITORY_ERROR_MESSAGE.THREAD_NOT_FOUND
-      );
-      expect(toggleCommentLikeResponsePayloadJsonB.message).toEqual(
+      expect(softDeleteCommentResponsePayloadJsonB.message).toEqual(
         COMMENT_REPOSITORY_ERROR_MESSAGE.COMMENT_NOT_FOUND
       );
     });
