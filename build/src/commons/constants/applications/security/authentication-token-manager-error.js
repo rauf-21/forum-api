@@ -1,0 +1,11 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.AUTHENTICATION_TOKEN_MANAGER_ERROR_MESSAGE = exports.AUTHENTICATION_TOKEN_MANAGER_ERROR = void 0;
+const prefix = "AUTHENTICATION_TOKEN_MANAGER_ERROR";
+exports.AUTHENTICATION_TOKEN_MANAGER_ERROR = {
+    METHOD_NOT_IMPLEMENTED: `${prefix}.METHOD_NOT_IMPLEMENTED`,
+    INVALID_REFRESH_TOKEN: `${prefix}.INVALID_REFRESH_TOKEN`,
+};
+exports.AUTHENTICATION_TOKEN_MANAGER_ERROR_MESSAGE = {
+    INVALID_REFRESH_TOKEN: "refresh token tidak valid",
+};
