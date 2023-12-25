@@ -1,0 +1,11 @@
+limit_req_zone $binary_remote_addr zone=one rate=90r/m
+
+server {
+  server_name localhost;
+  listen <%= ENV['PORT'] %>;
+  charset utf-8;
+  location / {
+    limit_req zone=one;
+    proxy_pass <%= ENV['MAIN_APP_URL'] %>;
+  }
+}
