@@ -6,10 +6,11 @@ const routes_1 = require("./routes");
 exports.commentsPlugin = {
     name: "comments",
     register(server, options) {
-        const { addCommentUseCase, softDeleteCommentUseCase } = options;
+        const { addCommentUseCase, softDeleteCommentUseCase, toggleCommentLikeUseCase, } = options;
         const commentsHandler = new handler_1.CommentsHandler({
             addCommentUseCase,
             softDeleteCommentUseCase,
+            toggleCommentLikeUseCase,
         });
         server.route((0, routes_1.commentsRoutes)(commentsHandler));
     },

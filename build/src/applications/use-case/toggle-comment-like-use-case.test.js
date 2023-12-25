@@ -26,34 +26,42 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const jme = __importStar(require("jest-mock-extended"));
 const comment_locator_context_1 = require("../../domains/comments/entities/comment-locator-context");
 const comment_owner_context_1 = require("../../domains/comments/entities/comment-owner-context");
-const soft_delete_comment_use_case_1 = require("./soft-delete-comment-use-case");
-describe("SoftDeleteCommentUseCase", () => {
-    it("should orchestrate the soft delete comment action correctly", async () => {
+const toggle_comment_like_use_case_1 = require("./toggle-comment-like-use-case");
+describe("ToggleCommentLikeUseCase", () => {
+    it("should orchestrate the toggle comment like action correctly", async () => {
         const useCasePayload = {
             id: "comment-123",
+            threadId: "thread-123",
             owner: "user-123",
-            threadId: "user-123",
         };
         const mockThreadRepository = jme.mock();
         mockThreadRepository.verifyThreadIsExists.mockResolvedValue(undefined);
         const mockCommentRepository = jme.mock();
-        mockCommentRepository.verifyUserIsCommentOwner.mockResolvedValue(undefined);
         mockCommentRepository.verifyCommentIsExists.mockResolvedValue(undefined);
-        mockCommentRepository.softDeleteCommentById.mockResolvedValue(undefined);
-        const softDeleteCommentUseCase = new soft_delete_comment_use_case_1.SoftDeleteCommentUseCase({
+        const mockCommentLikeRepository = jme.mock();
+        mockCommentLikeRepository.isCommentLiked
+            .mockResolvedValueOnce(false)
+            .mockResolvedValueOnce(true);
+        mockCommentLikeRepository.likeComment.mockResolvedValue(undefined);
+        mockCommentLikeRepository.unlikeComment.mockResolvedValue(undefined);
+        const toggleCommentLikeUseCase = new toggle_comment_like_use_case_1.ToggleCommentLikeUseCase({
             threadRepository: mockThreadRepository,
             commentRepository: mockCommentRepository,
+            commentLikeRepository: mockCommentLikeRepository,
         });
-        await softDeleteCommentUseCase.execute(useCasePayload);
+        await toggleCommentLikeUseCase.execute(useCasePayload);
+        const expectedCommentOwnerContext = new comment_owner_context_1.CommentOwnerContext({
+            id: useCasePayload.id,
+            owner: useCasePayload.owner,
+        });
         expect(mockThreadRepository.verifyThreadIsExists).toHaveBeenCalledWith(useCasePayload.threadId);
         expect(mockCommentRepository.verifyCommentIsExists).toHaveBeenCalledWith(new comment_locator_context_1.CommentLocatorContext({
             id: useCasePayload.id,
             threadId: useCasePayload.threadId,
         }));
-        expect(mockCommentRepository.verifyUserIsCommentOwner).toHaveBeenCalledWith(new comment_owner_context_1.CommentOwnerContext({
-            id: useCasePayload.id,
-            owner: useCasePayload.owner,
-        }));
-        expect(mockCommentRepository.softDeleteCommentById).toHaveBeenCalledWith(useCasePayload.id);
+        expect(mockCommentLikeRepository.isCommentLiked).toHaveBeenCalledWith(expectedCommentOwnerContext);
+        expect(mockCommentLikeRepository.likeComment).toHaveBeenCalledWith(expectedCommentOwnerContext);
+        await toggleCommentLikeUseCase.execute(useCasePayload);
+        expect(mockCommentLikeRepository.unlikeComment).toHaveBeenCalledWith(expectedCommentOwnerContext);
     });
 });

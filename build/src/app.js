@@ -14,6 +14,7 @@ async function start() {
     const addReplyUseCase = container_1.container.resolve("addReplyUseCase");
     const softDeleteReplyUseCase = container_1.container.resolve("softDeleteReplyUseCase");
     const getThreadDetailUseCase = container_1.container.resolve("getThreadDetailUseCase");
+    const toggleCommentLikeUseCase = container_1.container.resolve("toggleCommentLikeUseCase");
     const server = await (0, create_server_1.createServer)({
         addUserUseCase,
         loginUserUseCase,
@@ -25,6 +26,7 @@ async function start() {
         addReplyUseCase,
         softDeleteReplyUseCase,
         getThreadDetailUseCase,
+        toggleCommentLikeUseCase,
     });
     await server.start();
     // eslint-disable-next-line no-console

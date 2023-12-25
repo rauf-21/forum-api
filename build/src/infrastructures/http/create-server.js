@@ -40,7 +40,7 @@ const threads_1 = require("../../interfaces/http/api/threads");
 const users_1 = require("../../interfaces/http/api/users");
 const authentication_strategy_jwt_1 = require("../security/authentication-strategy-jwt");
 async function createServer(dependencies) {
-    const { addUserUseCase, loginUserUseCase, logoutUserUseCase, refreshAuthenticationUseCase, addThreadUseCase, addCommentUseCase, softDeleteCommentUseCase, addReplyUseCase, softDeleteReplyUseCase, getThreadDetailUseCase, } = dependencies;
+    const { addUserUseCase, loginUserUseCase, logoutUserUseCase, refreshAuthenticationUseCase, addThreadUseCase, addCommentUseCase, softDeleteCommentUseCase, addReplyUseCase, softDeleteReplyUseCase, getThreadDetailUseCase, toggleCommentLikeUseCase, } = dependencies;
     const server = Hapi.server({
         host: http_1.HOST,
         port: http_1.PORT,
@@ -71,7 +71,11 @@ async function createServer(dependencies) {
         },
         {
             plugin: comments_1.commentsPlugin,
-            options: { addCommentUseCase, softDeleteCommentUseCase },
+            options: {
+                addCommentUseCase,
+                softDeleteCommentUseCase,
+                toggleCommentLikeUseCase,
+            },
         },
         {
             plugin: replies_1.repliesPlugin,

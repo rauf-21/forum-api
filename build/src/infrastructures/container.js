@@ -42,8 +42,10 @@ const logout_user_use_case_1 = require("../applications/use-case/logout-user-use
 const refresh_authentication_use_case_1 = require("../applications/use-case/refresh-authentication-use-case");
 const soft_delete_comment_use_case_1 = require("../applications/use-case/soft-delete-comment-use-case");
 const soft_delete_reply_use_case_1 = require("../applications/use-case/soft-delete-reply-use-case");
+const toggle_comment_like_use_case_1 = require("../applications/use-case/toggle-comment-like-use-case");
 const db_1 = require("./database/postgres/db");
 const authentication_repository_postgres_1 = require("./repository/authentication-repository-postgres");
+const comment_like_repository_postgres_1 = require("./repository/comment-like-repository-postgres");
 const comment_repository_postgres_1 = require("./repository/comment-repository-postgres");
 const reply_repository_postgres_1 = require("./repository/reply-repository-postgres");
 const thread_repository_postgres_1 = require("./repository/thread-repository-postgres");
@@ -64,6 +66,7 @@ exports.container.register({
     threadRepository: Awilix.asClass(thread_repository_postgres_1.ThreadRepositoryPostgres).classic(),
     commentRepository: Awilix.asClass(comment_repository_postgres_1.CommentRepositoryPostgres).classic(),
     replyRepository: Awilix.asClass(reply_repository_postgres_1.ReplyRepositoryPostgres).classic(),
+    commentLikeRepository: Awilix.asClass(comment_like_repository_postgres_1.CommentLikeRepositoryPostgres).classic(),
     // Use Case
     addUserUseCase: Awilix.asClass(add_user_use_case_1.AddUserUseCase).proxy(),
     loginUserUseCase: Awilix.asClass(login_user_use_case_1.LoginUserUseCase).proxy(),
@@ -76,4 +79,5 @@ exports.container.register({
     addReplyUseCase: Awilix.asClass(add_reply_use_case_1.AddReplyUseCase).proxy(),
     softDeleteReplyUseCase: Awilix.asClass(soft_delete_reply_use_case_1.SoftDeleteReplyUseCase).proxy(),
     getThreadDetailUseCase: Awilix.asClass(get_thread_detail_use_case_1.GetThreadDetailUseCase).proxy(),
+    toggleCommentLikeUseCase: Awilix.asClass(toggle_comment_like_use_case_1.ToggleCommentLikeUseCase).proxy(),
 });

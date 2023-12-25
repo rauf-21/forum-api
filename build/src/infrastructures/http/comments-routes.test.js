@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const authentications_table_test_helper_1 = require("../../../tests/authentications-table-test-helper");
+const comment_likes_table_test_helper_1 = require("../../../tests/comment-likes-table-test-helper");
 const comments_table_test_helper_1 = require("../../../tests/comments-table-test-helper");
 const threads_table_test_helper_1 = require("../../../tests/threads-table-test-helper");
 const users_table_test_helper_1 = require("../../../tests/users-table-test-helper");
@@ -16,11 +17,14 @@ describe("/comments endpoint", () => {
     const addThreadUseCase = container_1.container.resolve("addThreadUseCase");
     const addCommentUseCase = container_1.container.resolve("addCommentUseCase");
     const softDeleteCommentUseCase = container_1.container.resolve("softDeleteCommentUseCase");
+    const toggleCommentLikeUseCase = container_1.container.resolve("toggleCommentLikeUseCase");
+    const getThreadDetailUseCase = container_1.container.resolve("getThreadDetailUseCase");
     beforeAll(async () => {
         await users_table_test_helper_1.UsersTableTestHelper.cleanTable();
         await threads_table_test_helper_1.ThreadsTableTestHelper.cleanTable();
         await authentications_table_test_helper_1.AuthenticationsTableTestHelper.cleanTable();
         await comments_table_test_helper_1.CommentsTableTestHelper.cleanTable();
+        await comment_likes_table_test_helper_1.CommentLikesTableTestHelper.cleanTable();
     });
     afterAll(async () => {
         await db_1.db.destroy();
@@ -30,6 +34,7 @@ describe("/comments endpoint", () => {
         await threads_table_test_helper_1.ThreadsTableTestHelper.cleanTable();
         await authentications_table_test_helper_1.AuthenticationsTableTestHelper.cleanTable();
         await comments_table_test_helper_1.CommentsTableTestHelper.cleanTable();
+        await comment_likes_table_test_helper_1.CommentLikesTableTestHelper.cleanTable();
     });
     describe("when POST /comments", () => {
         it("should have a response with a 201 status code and persist the comment", async () => {
@@ -455,8 +460,74 @@ describe("/comments endpoint", () => {
                 addUserUseCase,
                 loginUserUseCase,
                 addThreadUseCase,
-                addCommentUseCase,
                 softDeleteCommentUseCase,
+            });
+            const addUserPayload = {
+                username: "bono",
+                password: "bono123",
+                fullname: "bono bono",
+            };
+            await server.inject({
+                method: "POST",
+                url: "/users",
+                payload: addUserPayload,
+            });
+            const loginUserResponse = await server.inject({
+                method: "POST",
+                url: "/authentications",
+                payload: {
+                    username: addUserPayload.username,
+                    password: addUserPayload.password,
+                },
+            });
+            const loginUserResponsePayloadJson = JSON.parse(loginUserResponse.payload);
+            const { accessToken } = loginUserResponsePayloadJson.data;
+            const addThreadResponse = await server.inject({
+                method: "POST",
+                url: "/threads",
+                headers: {
+                    authorization: `Bearer ${accessToken}`,
+                },
+                payload: {
+                    title: "this is a title",
+                    body: "this is a body",
+                },
+            });
+            const addThreadResponsePayloadJson = JSON.parse(addThreadResponse.payload);
+            const { addedThread } = addThreadResponsePayloadJson.data;
+            const softDeleteCommentResponseA = await server.inject({
+                method: "DELETE",
+                url: `/threads/thread-123/comments/comment-123`,
+                headers: {
+                    authorization: `Bearer ${accessToken}`,
+                },
+            });
+            const softDeleteCommentResponsePayloadJsonA = JSON.parse(softDeleteCommentResponseA.payload);
+            const softDeleteCommentResponseB = await server.inject({
+                method: "DELETE",
+                url: `/threads/${addedThread.id}/comments/comment-123`,
+                headers: {
+                    authorization: `Bearer ${accessToken}`,
+                },
+            });
+            const softDeleteCommentResponsePayloadJsonB = JSON.parse(softDeleteCommentResponseB.payload);
+            expect(softDeleteCommentResponseA.statusCode).toEqual(404);
+            expect(softDeleteCommentResponseB.statusCode).toEqual(404);
+            expect(softDeleteCommentResponsePayloadJsonA.status).toEqual("fail");
+            expect(softDeleteCommentResponsePayloadJsonB.status).toEqual("fail");
+            expect(softDeleteCommentResponsePayloadJsonA.message).toEqual(thread_repository_error_1.THREAD_REPOSITORY_ERROR_MESSAGE.THREAD_NOT_FOUND);
+            expect(softDeleteCommentResponsePayloadJsonB.message).toEqual(comment_repository_error_1.COMMENT_REPOSITORY_ERROR_MESSAGE.COMMENT_NOT_FOUND);
+        });
+    });
+    describe("when PUT /likes", () => {
+        it("should have a response with a 200 statusCode and toggle comment like", async () => {
+            const server = await (0, create_server_1.createServer)({
+                addUserUseCase,
+                loginUserUseCase,
+                addThreadUseCase,
+                addCommentUseCase,
+                toggleCommentLikeUseCase,
+                getThreadDetailUseCase,
             });
             const addUserPayload = {
                 username: "bono",
@@ -503,28 +574,97 @@ describe("/comments endpoint", () => {
             });
             const addedCommentResponsePayloadJson = JSON.parse(addCommentResponse.payload);
             const { addedComment } = addedCommentResponsePayloadJson.data;
-            const softDeleteCommentResponseA = await server.inject({
-                method: "DELETE",
-                url: `/threads/thread-123/comments/${addedComment.id}`,
+            await server.inject({
+                method: "PUT",
+                url: `/threads/${addedThread.id}/comments/${addedComment.id}/likes`,
                 headers: {
                     authorization: `Bearer ${accessToken}`,
                 },
             });
-            const softDeleteCommentResponsePayloadJsonA = JSON.parse(softDeleteCommentResponseA.payload);
-            const softDeleteCommentResponseB = await server.inject({
-                method: "DELETE",
-                url: `/threads/${addedThread.id}/comments/comment-123`,
+            const getThreadDetailResponseA = await server.inject({
+                method: "GET",
+                url: `/threads/${addedThread.id}`,
+            });
+            const getThreadDetailResponsePayloadJsonA = JSON.parse(getThreadDetailResponseA.payload);
+            const { thread: threadDetailA } = getThreadDetailResponsePayloadJsonA.data;
+            expect(threadDetailA.comments[0].likeCount).toEqual(1);
+            await server.inject({
+                method: "PUT",
+                url: `/threads/${addedThread.id}/comments/${addedComment.id}/likes`,
                 headers: {
                     authorization: `Bearer ${accessToken}`,
                 },
             });
-            const softDeleteCommentResponsePayloadJsonB = JSON.parse(softDeleteCommentResponseB.payload);
-            expect(softDeleteCommentResponseA.statusCode).toEqual(404);
-            expect(softDeleteCommentResponseB.statusCode).toEqual(404);
-            expect(softDeleteCommentResponsePayloadJsonA.status).toEqual("fail");
-            expect(softDeleteCommentResponsePayloadJsonB.status).toEqual("fail");
-            expect(softDeleteCommentResponsePayloadJsonA.message).toEqual(comment_repository_error_1.COMMENT_REPOSITORY_ERROR_MESSAGE.COMMENT_NOT_FOUND);
-            expect(softDeleteCommentResponsePayloadJsonB.message).toEqual(comment_repository_error_1.COMMENT_REPOSITORY_ERROR_MESSAGE.COMMENT_NOT_FOUND);
+            const getThreadDetailResponseB = await server.inject({
+                method: "GET",
+                url: `/threads/${addedThread.id}`,
+            });
+            const getThreadDetailResponsePayloadJsonB = JSON.parse(getThreadDetailResponseB.payload);
+            const { thread: threadDetailB } = getThreadDetailResponsePayloadJsonB.data;
+            expect(threadDetailB.comments[0].likeCount).toEqual(0);
+        });
+        it("should have a response with a 404 statusCode if the thread or comment is not found", async () => {
+            const server = await (0, create_server_1.createServer)({
+                addUserUseCase,
+                loginUserUseCase,
+                addThreadUseCase,
+                toggleCommentLikeUseCase,
+            });
+            const addUserPayload = {
+                username: "bono",
+                password: "bono123",
+                fullname: "bono bono",
+            };
+            await server.inject({
+                method: "POST",
+                url: "/users",
+                payload: addUserPayload,
+            });
+            const loginUserResponse = await server.inject({
+                method: "POST",
+                url: "/authentications",
+                payload: {
+                    username: addUserPayload.username,
+                    password: addUserPayload.password,
+                },
+            });
+            const loginUserResponsePayloadJson = JSON.parse(loginUserResponse.payload);
+            const { accessToken } = loginUserResponsePayloadJson.data;
+            const addThreadResponse = await server.inject({
+                method: "POST",
+                url: "/threads",
+                headers: {
+                    authorization: `Bearer ${accessToken}`,
+                },
+                payload: {
+                    title: "this is a title",
+                    body: "this is a content",
+                },
+            });
+            const addThreadResponsePayloadJson = JSON.parse(addThreadResponse.payload);
+            const { addedThread } = addThreadResponsePayloadJson.data;
+            const toggleCommentLikeResponseA = await server.inject({
+                method: "PUT",
+                url: "/threads/thread-123/comments/comment-123/likes",
+                headers: {
+                    authorization: `Bearer ${accessToken}`,
+                },
+            });
+            const toggleCommentLikeResponsePayloadJsonA = JSON.parse(toggleCommentLikeResponseA.payload);
+            const toggleCommentLikeResponseB = await server.inject({
+                method: "PUT",
+                url: `/threads/${addedThread.id}/comments/comment-123/likes`,
+                headers: {
+                    authorization: `Bearer ${accessToken}`,
+                },
+            });
+            const toggleCommentLikeResponsePayloadJsonB = JSON.parse(toggleCommentLikeResponseB.payload);
+            expect(toggleCommentLikeResponseA.statusCode).toEqual(404);
+            expect(toggleCommentLikeResponseB.statusCode).toEqual(404);
+            expect(toggleCommentLikeResponsePayloadJsonA.status).toEqual("fail");
+            expect(toggleCommentLikeResponsePayloadJsonB.status).toEqual("fail");
+            expect(toggleCommentLikeResponsePayloadJsonA.message).toEqual(thread_repository_error_1.THREAD_REPOSITORY_ERROR_MESSAGE.THREAD_NOT_FOUND);
+            expect(toggleCommentLikeResponsePayloadJsonB.message).toEqual(comment_repository_error_1.COMMENT_REPOSITORY_ERROR_MESSAGE.COMMENT_NOT_FOUND);
         });
     });
 });

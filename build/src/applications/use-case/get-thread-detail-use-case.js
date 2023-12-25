@@ -10,7 +10,7 @@ var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (
     if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
     return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
 };
-var _GetThreadDetailUseCase_userRepository, _GetThreadDetailUseCase_threadRepository, _GetThreadDetailUseCase_commentRepository, _GetThreadDetailUseCase_replyRepository;
+var _GetThreadDetailUseCase_userRepository, _GetThreadDetailUseCase_threadRepository, _GetThreadDetailUseCase_commentRepository, _GetThreadDetailUseCase_replyRepository, _GetThreadDetailUseCase_commentLikeRepository;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GetThreadDetailUseCase = void 0;
 const zod_1 = require("zod");
@@ -29,11 +29,13 @@ class GetThreadDetailUseCase {
         _GetThreadDetailUseCase_threadRepository.set(this, void 0);
         _GetThreadDetailUseCase_commentRepository.set(this, void 0);
         _GetThreadDetailUseCase_replyRepository.set(this, void 0);
-        const { userRepository, threadRepository, commentRepository, replyRepository, } = dependencies;
+        _GetThreadDetailUseCase_commentLikeRepository.set(this, void 0);
+        const { userRepository, threadRepository, commentRepository, replyRepository, commentLikeRepository, } = dependencies;
         __classPrivateFieldSet(this, _GetThreadDetailUseCase_userRepository, userRepository, "f");
         __classPrivateFieldSet(this, _GetThreadDetailUseCase_threadRepository, threadRepository, "f");
         __classPrivateFieldSet(this, _GetThreadDetailUseCase_commentRepository, commentRepository, "f");
         __classPrivateFieldSet(this, _GetThreadDetailUseCase_replyRepository, replyRepository, "f");
+        __classPrivateFieldSet(this, _GetThreadDetailUseCase_commentLikeRepository, commentLikeRepository, "f");
     }
     async execute(payload) {
         const result = GetThreadDetailUseCasePayloadSchema.safeParse(payload);
@@ -51,6 +53,7 @@ class GetThreadDetailUseCase {
             const commentContent = comment.isDeleted
                 ? get_thread_detail_use_case_text_1.GET_THREAD_DETAIL_USE_CASE_TEXT.SOFT_DELETED_COMMENT
                 : comment.content;
+            const likeCount = await __classPrivateFieldGet(this, _GetThreadDetailUseCase_commentLikeRepository, "f").getCommentLikeCountByCommentId(comment.id);
             const formattedReplies = await Promise.all(replies.map(async (reply) => {
                 const replierUsername = await __classPrivateFieldGet(this, _GetThreadDetailUseCase_userRepository, "f").getUsernameById(reply.owner);
                 const replyContent = reply.isDeleted
@@ -68,6 +71,7 @@ class GetThreadDetailUseCase {
                 date: comment.date,
                 username: commenterUsername,
                 content: commentContent,
+                likeCount,
                 replies: formattedReplies,
             };
         }));
@@ -82,4 +86,4 @@ class GetThreadDetailUseCase {
     }
 }
 exports.GetThreadDetailUseCase = GetThreadDetailUseCase;
-_GetThreadDetailUseCase_userRepository = new WeakMap(), _GetThreadDetailUseCase_threadRepository = new WeakMap(), _GetThreadDetailUseCase_commentRepository = new WeakMap(), _GetThreadDetailUseCase_replyRepository = new WeakMap();
+_GetThreadDetailUseCase_userRepository = new WeakMap(), _GetThreadDetailUseCase_threadRepository = new WeakMap(), _GetThreadDetailUseCase_commentRepository = new WeakMap(), _GetThreadDetailUseCase_replyRepository = new WeakMap(), _GetThreadDetailUseCase_commentLikeRepository = new WeakMap();

@@ -19,5 +19,13 @@ const commentsRoutes = (handler) => [
             auth: authentication_strategy_1.AUTHENTICATION_STRATEGY.JWT,
         },
     },
+    {
+        method: "PUT",
+        path: "/threads/{threadId}/comments/{commentId}/likes",
+        handler: handler.toggleCommentLikeHandler,
+        options: {
+            auth: authentication_strategy_1.AUTHENTICATION_STRATEGY.JWT,
+        },
+    },
 ];
 exports.commentsRoutes = commentsRoutes;

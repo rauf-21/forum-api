@@ -55,6 +55,8 @@ describe("GetThreadDetailUseCase", () => {
                 threadId: "thread-123",
             },
         ]);
+        const mockCommentLikeRepository = jme.mock();
+        mockCommentLikeRepository.getCommentLikeCountByCommentId.mockResolvedValue(0);
         const mockReplyRepository = jme.mock();
         mockReplyRepository.getRepliesByCommentId.mockResolvedValue([
             {
@@ -71,6 +73,7 @@ describe("GetThreadDetailUseCase", () => {
             threadRepository: mockThreadRepository,
             commentRepository: mockCommentRepository,
             replyRepository: mockReplyRepository,
+            commentLikeRepository: mockCommentLikeRepository,
         });
         const threadDetail = await getThreadDetailUseCase.execute(useCasePayload);
         expect(threadDetail).toEqual(new thread_detail_1.ThreadDetail({
@@ -85,6 +88,7 @@ describe("GetThreadDetailUseCase", () => {
                     username: "bono",
                     date: new Date("2021-08-08T07:59:18.982Z"),
                     content: "this is a comment",
+                    likeCount: 0,
                     replies: [
                         {
                             id: "reply-123",
@@ -99,6 +103,7 @@ describe("GetThreadDetailUseCase", () => {
         expect(mockUserRepository.getUsernameById).toHaveBeenCalledWith("user-123");
         expect(mockThreadRepository.getThreadById).toHaveBeenCalledWith("thread-123");
         expect(mockCommentRepository.getCommentsByThreadId).toHaveBeenCalledWith("thread-123");
+        expect(mockCommentLikeRepository.getCommentLikeCountByCommentId).toHaveBeenCalledWith("comment-123");
         expect(mockReplyRepository.getRepliesByCommentId).toHaveBeenCalledWith("comment-123");
     });
     it("should throw an error if there is a missing property", async () => {
@@ -137,6 +142,8 @@ describe("GetThreadDetailUseCase", () => {
                 threadId: "thread-123",
             },
         ]);
+        const mockCommentLikeRepository = jme.mock();
+        mockCommentLikeRepository.getCommentLikeCountByCommentId.mockResolvedValue(0);
         const mockReplyRepository = jme.mock();
         mockReplyRepository.getRepliesByCommentId.mockResolvedValue([
             {
@@ -153,6 +160,7 @@ describe("GetThreadDetailUseCase", () => {
             threadRepository: mockThreadRepository,
             commentRepository: mockCommentRepository,
             replyRepository: mockReplyRepository,
+            commentLikeRepository: mockCommentLikeRepository,
         });
         const threadDetail = await getThreadDetailUseCase.execute(useCasePayload);
         expect(threadDetail).toEqual(new thread_detail_1.ThreadDetail({
@@ -167,6 +175,7 @@ describe("GetThreadDetailUseCase", () => {
                     username: "bono",
                     date: new Date("2021-08-08T07:59:18.982Z"),
                     content: get_thread_detail_use_case_text_1.GET_THREAD_DETAIL_USE_CASE_TEXT.SOFT_DELETED_COMMENT,
+                    likeCount: 0,
                     replies: [
                         {
                             id: "reply-123",
@@ -181,6 +190,7 @@ describe("GetThreadDetailUseCase", () => {
         expect(mockUserRepository.getUsernameById).toHaveBeenCalledWith("user-123");
         expect(mockThreadRepository.getThreadById).toHaveBeenCalledWith("thread-123");
         expect(mockCommentRepository.getCommentsByThreadId).toHaveBeenCalledWith("thread-123");
+        expect(mockCommentLikeRepository.getCommentLikeCountByCommentId).toHaveBeenCalledWith("comment-123");
         expect(mockReplyRepository.getRepliesByCommentId).toHaveBeenCalledWith("comment-123");
     });
 });

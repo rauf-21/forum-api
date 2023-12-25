@@ -48,6 +48,10 @@ const ThreadCommentPayloadSchema = zod_1.z.object({
         required_error: thread_detail_error_1.THREAD_DETAIL_ERROR.COMMENT.MISSING_PROPERTY,
         invalid_type_error: thread_detail_error_1.THREAD_DETAIL_ERROR.COMMENT.INVALID_DATA_TYPE,
     }),
+    likeCount: zod_1.z.number({
+        required_error: thread_detail_error_1.THREAD_DETAIL_ERROR.COMMENT.MISSING_PROPERTY,
+        invalid_type_error: thread_detail_error_1.THREAD_DETAIL_ERROR.COMMENT.INVALID_DATA_TYPE,
+    }),
     replies: zod_1.z.array(CommentReplyPayloadSchema),
 });
 const ThreadDetailPayloadSchema = zod_1.z.object({
