@@ -1,4 +1,4 @@
-limit_req_zone $binary_remote_addr zone=one:10m rate=5r/m;
+# limit_req_zone $binary_remote_addr zone=one:10m rate=5r/m;
 
 server {
   server_name localhost;
@@ -8,7 +8,7 @@ server {
     proxy_pass <%= ENV['MAIN_APP_URL'] %>;
   }
   location /threads/ {
-    limit_req zone=one;
+    # limit_req zone=one;
     proxy_pass <%= ENV['MAIN_APP_URL'] %>/$uri;
   }
 }
