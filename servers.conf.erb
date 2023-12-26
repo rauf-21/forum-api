@@ -7,7 +7,7 @@ server {
   location / {
     proxy_pass <%= ENV['MAIN_APP_URL'] %>;
   }
-  location /threads {
+  location /threads/ {
     limit_req zone=one;
     proxy_pass <%= ENV['MAIN_APP_URL'] %>/threads;
   }
