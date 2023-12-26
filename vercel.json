@@ -14,5 +14,16 @@
       "src": "/(.*)",
       "dest": "build/src/app.js"
     }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "https://rauf-21-forum-api.osc-fr1.scalingo.io"
+        }
+      ]
+    }
   ]
 }
