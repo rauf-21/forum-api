@@ -4,11 +4,13 @@ server {
   server_name localhost;
   listen <%= ENV['PORT'] %>;
   charset utf-8;
+  
   location / {
     proxy_pass <%= ENV['MAIN_APP_URL'] %>;
   }
+  
   location /threads {
-    limit_req zone=one;
     proxy_pass <%= ENV['MAIN_APP_URL'] %>/threads;
+    limit_req zone=one;
   }
 }
