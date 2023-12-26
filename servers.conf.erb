@@ -10,7 +10,7 @@ server {
   }
   
   location /threads {
-    proxy_pass <%= ENV['MAIN_APP_URL'] %>/threads/;
+    proxy_pass <%= ENV['MAIN_APP_URL'] %>/threads;
     limit_req zone=one;
   }
 }
