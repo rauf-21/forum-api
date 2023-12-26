@@ -9,6 +9,6 @@ server {
   }
   location /threads/ {
     limit_req zone=one;
-    proxy_pass <%= ENV['MAIN_APP_URL'] %>/threads/;
+    proxy_pass <%= ENV['MAIN_APP_URL'] %>/threads$uri;
   }
 }
