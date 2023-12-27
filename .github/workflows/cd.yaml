@@ -2,9 +2,7 @@ name: Continuous Deployment
 
 on:
   push:
-    branches:
-      - main
-      - reverse-proxy
+    branches: main
 
 env:
   VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
@@ -13,7 +11,6 @@ env:
 
 jobs:
   deploy-main:
-    if: ${{ github.ref_name == 'main' }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -51,15 +48,3 @@ jobs:
       - name: Deploy Project Artifacts to Vercel
         run: |
           vercel deploy --prebuilt --prod --token=${{ env.VERCEL_TOKEN }}
-
-  deploy-reverse-proxy:
-    if: ${{ github.ref_name == 'reverse-proxy' }}
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Deploy to Scalingo
-        uses: kolok/deploy-to-scalingo@v1
-        with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-          app-name: ${{ vars.SCALINGO_APP_NAME }}
-          known-host: ${{ vars.SCALINGO_KNOWN_HOST }}
